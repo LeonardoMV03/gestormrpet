@@ -44,9 +44,16 @@ class DatabaseTest {
         new DatabaseInitializer(database).migrar();
 
         try (Connection conexion = database.conexion(); Statement sentencia = conexion.createStatement()) {
-            assertThrows(SQLException.class, () -> sentencia.executeUpdate(
+            SQLException fallo = assertThrows(SQLException.class, () -> sentencia.executeUpdate(
                     "INSERT INTO mascotas (cliente_id, nombre) VALUES (999, 'Huerfana')"));
+            assertTrue(fallo.getMessage().toUpperCase().contains("FOREIGN KEY"),
+                    "El fallo debe deberse a la FK, no a otra restricción: " + fallo.getMessage());
         }
+    }
+
+    @Test
+    void debeRechazarUrlVacia() {
+        assertThrows(IllegalArgumentException.class, () -> Database.deUrl("  "));
     }
 
     @Test

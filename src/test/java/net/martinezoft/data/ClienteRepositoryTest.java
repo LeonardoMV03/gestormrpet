@@ -76,6 +76,21 @@ class ClienteRepositoryTest {
     }
 
     @Test
+    void debeDevolverVacioAlBuscarUnClienteInexistente() throws SQLException {
+        assertTrue(repositorio.buscarPorId(12345).isEmpty());
+    }
+
+    @Test
+    void noDebeActualizarUnClienteInactivo() throws SQLException {
+        Cliente guardado = repositorio.insertar(Cliente.nuevo("Ana", null, null, null, null));
+        repositorio.desactivar(guardado.id());
+
+        Cliente editado = new Cliente(guardado.id(), "Ana Pérez", null, null, null, null, true);
+
+        assertFalse(repositorio.actualizar(editado), "Un cliente inactivo no debe actualizarse");
+    }
+
+    @Test
     void debeRechazarNombreVacioEnElDominio() {
         assertThrows(IllegalArgumentException.class,
                 () -> Cliente.nuevo("   ", null, null, null, null));

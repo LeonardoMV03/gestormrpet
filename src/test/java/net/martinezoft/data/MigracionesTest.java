@@ -53,6 +53,31 @@ class MigracionesTest {
     }
 
     @Test
+    void debeCrearLaTablaUsuariosConSusColumnas() throws SQLException {
+        Set<String> columnas = columnasDe("usuarios");
+
+        assertTrue(columnas.containsAll(Set.of("id", "usuario", "clave_hash", "creado_en", "actualizado_en")),
+                "Faltan columnas en usuarios. Encontradas: " + columnas);
+    }
+
+    @Test
+    void debeCrearLasColumnasBaseDeClientes() throws SQLException {
+        Set<String> columnas = columnasDe("clientes");
+
+        assertTrue(columnas.containsAll(Set.of(
+                "id", "nombre", "telefono", "email", "direccion", "notas", "activo", "creado_en", "actualizado_en")),
+                "Faltan columnas en clientes. Encontradas: " + columnas);
+    }
+
+    @Test
+    void debeCrearLosIndicesDelEsquemaBase() throws SQLException {
+        Set<String> indices = indicesDeUsuario();
+
+        assertTrue(indices.containsAll(Set.of("idx_mascotas_cliente", "idx_citas_mascota", "idx_notas_mascota")),
+                "Faltan índices del esquema base. Encontrados: " + indices);
+    }
+
+    @Test
     void debeSerIdempotenteAlMigrarDosVeces() throws SQLException {
         new DatabaseInitializer(database).migrar();
 
@@ -88,6 +113,19 @@ class MigracionesTest {
             }
         }
         return tablas;
+    }
+
+    private Set<String> indicesDeUsuario() throws SQLException {
+        String sql = "SELECT name FROM sqlite_master WHERE type = 'index' AND name NOT LIKE 'sqlite_%'";
+        Set<String> indices = new LinkedHashSet<>();
+        try (Connection conexion = database.conexion();
+             Statement sentencia = conexion.createStatement();
+             ResultSet filas = sentencia.executeQuery(sql)) {
+            while (filas.next()) {
+                indices.add(filas.getString("name"));
+            }
+        }
+        return indices;
     }
 
     private Set<String> columnasDe(String tabla) throws SQLException {
