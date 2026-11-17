@@ -35,8 +35,8 @@ class MigracionesTest {
     }
 
     @Test
-    void debeRegistrarLasVersionesV1V2YV3() throws SQLException {
-        assertEquals(List.of("1", "2", "3"), versionesAplicadas());
+    void debeRegistrarLasVersionesV1V2V3YV4() throws SQLException {
+        assertEquals(List.of("1", "2", "3", "4"), versionesAplicadas());
     }
 
     @Test
@@ -65,6 +65,28 @@ class MigracionesTest {
     }
 
     @Test
+    void debeAgregarElAvisoDeCambioDePassword() throws SQLException {
+        Set<String> columnas = columnasDe("usuarios");
+
+        assertTrue(columnas.contains("debe_cambiar_password"),
+                "Falta la columna debe_cambiar_password. Encontradas: " + columnas);
+    }
+
+    @Test
+    void debeInicializarDebeCambiarPasswordEnCero() throws SQLException {
+        try (Connection conexion = database.conexion(); Statement sentencia = conexion.createStatement()) {
+            sentencia.executeUpdate("INSERT INTO usuarios (usuario, clave_hash) VALUES ('admin', 'hash')");
+
+            try (ResultSet filas = sentencia.executeQuery(
+                    "SELECT debe_cambiar_password FROM usuarios WHERE usuario = 'admin'")) {
+                assertTrue(filas.next());
+                assertEquals(0, filas.getInt("debe_cambiar_password"),
+                        "El valor por defecto de debe_cambiar_password debe ser 0");
+            }
+        }
+    }
+
+    @Test
     void debeCrearLasColumnasBaseDeClientes() throws SQLException {
         Set<String> columnas = columnasDe("clientes");
 
@@ -85,7 +107,7 @@ class MigracionesTest {
     void debeSerIdempotenteAlMigrarDosVeces() throws SQLException {
         new DatabaseInitializer(database).migrar();
 
-        assertEquals(List.of("1", "2", "3"), versionesAplicadas());
+        assertEquals(List.of("1", "2", "3", "4"), versionesAplicadas());
     }
 
     @Test
