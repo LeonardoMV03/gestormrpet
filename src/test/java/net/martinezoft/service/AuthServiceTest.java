@@ -51,6 +51,10 @@ class AuthServiceTest {
         assertEquals("admin", admin.usuario());
         assertTrue(admin.debeCambiarPassword(), "El admin inicial debe avisar del cambio de contraseña");
         assertNotEquals("admin", admin.claveHash(), "La contraseña no puede guardarse en texto plano");
+        assertTrue(admin.claveHash().startsWith("pbkdf2$sha256$"),
+                "El hash sembrado debe usar el formato PBKDF2-SHA256");
+        assertFalse(admin.claveHash().contains("admin"),
+                "El hash almacenado no debe contener la contraseña en claro");
         assertTrue(hasher.verificar("admin", admin.claveHash()));
     }
 

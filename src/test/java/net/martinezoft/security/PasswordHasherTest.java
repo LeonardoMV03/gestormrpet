@@ -1,9 +1,11 @@
 package net.martinezoft.security;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Base64;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -82,5 +84,18 @@ class PasswordHasherTest {
         String hash = hasher.hash("secreto123");
 
         assertFalse(hash.contains("secreto123"), "El hash no debe contener la contraseña");
+    }
+
+    @Test
+    void debeCumplirLosParametrosMinimosDeSeguridad() {
+        String[] partes = hasher.hash("secreto123").split("\\$", -1);
+
+        int iteraciones = Integer.parseInt(partes[2]);
+        byte[] sal = Base64.getDecoder().decode(partes[3]);
+        byte[] clave = Base64.getDecoder().decode(partes[4]);
+
+        assertTrue(iteraciones >= 210_000, "Debe usar al menos 210000 iteraciones: " + iteraciones);
+        assertEquals(PasswordHasher.SAL_BYTES, sal.length, "El salt debe ser de 16 bytes");
+        assertEquals(PasswordHasher.CLAVE_BITS / 8, clave.length, "La clave derivada debe ser de 256 bits");
     }
 }
