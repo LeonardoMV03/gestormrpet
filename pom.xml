@@ -11,7 +11,7 @@
         <junit.version>5.14.4</junit.version>
         <testfx.version>4.0.18</testfx.version>
         <openjfx.monocle.version>21.0.2</openjfx.monocle.version>
-        <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
+        <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>3.5.6</maven.surefire.plugin.version>
     </properties>
     <dependencies>
