@@ -80,6 +80,28 @@ class PasswordHasherTest {
     }
 
     @Test
+    void debeRechazarIteracionesFueraDeRangoSinDerivarLaClave() {
+        String sal = Base64.getEncoder().encodeToString(new byte[PasswordHasher.SAL_BYTES]);
+        String clave = Base64.getEncoder().encodeToString(new byte[PasswordHasher.CLAVE_BITS / 8]);
+        String hash = "pbkdf2$sha256$2000000000$" + sal + "$" + clave;
+
+        assertFalse(hasher.verificar("secreto123", hash),
+                "Un número de iteraciones absurdo debe rechazarse sin derivar la clave");
+    }
+
+    @Test
+    void debeRechazarClavesDeLongitudIncorrecta() {
+        String sal = Base64.getEncoder().encodeToString(new byte[PasswordHasher.SAL_BYTES]);
+
+        for (int bytes : new int[] {16, 31, 33}) {
+            String clave = Base64.getEncoder().encodeToString(new byte[bytes]);
+            String hash = "pbkdf2$sha256$210000$" + sal + "$" + clave;
+            assertFalse(hasher.verificar("secreto123", hash),
+                    "Una clave de " + bytes + " bytes debe rechazarse");
+        }
+    }
+
+    @Test
     void noDebeAlmacenarLaContrasenaEnTextoPlano() {
         String hash = hasher.hash("secreto123");
 

@@ -72,7 +72,7 @@ public final class AuthService {
         if (!hasher.verificar(actual, usuario.claveHash())) {
             throw new IllegalArgumentException("La contraseña actual no es correcta");
         }
-        if (nueva.length() < LONGITUD_MINIMA) {
+        if (nueva.isBlank() || nueva.length() < LONGITUD_MINIMA) {
             throw new IllegalArgumentException(
                     "La nueva contraseña debe tener al menos " + LONGITUD_MINIMA + " caracteres");
         }

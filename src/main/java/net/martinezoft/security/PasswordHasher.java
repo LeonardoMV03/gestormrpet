@@ -21,6 +21,7 @@ public final class PasswordHasher {
     public static final String PREFIJO = "pbkdf2";
     public static final String HASH = "sha256";
     public static final int ITERACIONES = 210_000;
+    public static final int MAX_ITERACIONES = 2_000_000;
     public static final int SAL_BYTES = 16;
     public static final int CLAVE_BITS = 256;
 
@@ -69,10 +70,13 @@ public final class PasswordHasher {
         } catch (IllegalArgumentException e) {
             return false;
         }
-        if (iteracionesAlmacenadas < 1 || sal.length == 0 || esperado.length == 0) {
+        if (iteracionesAlmacenadas < 1 || iteracionesAlmacenadas > MAX_ITERACIONES) {
             return false;
         }
-        byte[] calculado = derivar(password.toCharArray(), sal, iteracionesAlmacenadas, esperado.length * 8);
+        if (sal.length == 0 || esperado.length != CLAVE_BITS / 8) {
+            return false;
+        }
+        byte[] calculado = derivar(password.toCharArray(), sal, iteracionesAlmacenadas, CLAVE_BITS);
         return MessageDigest.isEqual(esperado, calculado);
     }
 

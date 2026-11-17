@@ -118,6 +118,14 @@ class AuthServiceTest {
     }
 
     @Test
+    void debeRechazarContrasenaNuevaEnBlanco() throws SQLException {
+        Usuario admin = repositorio.buscarPorUsuario("admin").orElseThrow();
+
+        assertThrows(IllegalArgumentException.class,
+                () -> auth.cambiarClave(admin.id(), "admin", "        "));
+    }
+
+    @Test
     void debeRechazarContrasenaNuevaIgualALaActual() throws SQLException {
         Usuario admin = repositorio.buscarPorUsuario("admin").orElseThrow();
 
