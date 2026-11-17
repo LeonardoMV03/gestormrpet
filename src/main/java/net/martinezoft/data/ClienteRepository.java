@@ -20,6 +20,9 @@ public final class ClienteRepository {
 
     private static final String COLUMNAS = "id, nombre, telefono, email, direccion, notas, activo";
 
+    /** Marca de tiempo UTC en ISO-8601, coherente con los defaults del esquema. */
+    private static final String AHORA_ISO = "strftime('%Y-%m-%dT%H:%M:%SZ', 'now')";
+
     private final Database database;
 
     public ClienteRepository(Database database) {
@@ -92,9 +95,9 @@ public final class ClienteRepository {
         String sql = """
                 UPDATE clientes
                    SET nombre = ?, telefono = ?, email = ?, direccion = ?, notas = ?,
-                       actualizado_en = datetime('now')
+                       actualizado_en = %s
                  WHERE id = ? AND activo = 1
-                """;
+                """.formatted(AHORA_ISO);
         try (Connection conexion = database.conexion();
              PreparedStatement sentencia = conexion.prepareStatement(sql)) {
             sentencia.setString(1, cliente.nombre());
@@ -113,7 +116,8 @@ public final class ClienteRepository {
      * @return {@code true} si se desactivó alguna fila.
      */
     public boolean desactivar(long id) throws SQLException {
-        String sql = "UPDATE clientes SET activo = 0, actualizado_en = datetime('now') WHERE id = ? AND activo = 1";
+        String sql = "UPDATE clientes SET activo = 0, actualizado_en = " + AHORA_ISO
+                + " WHERE id = ? AND activo = 1";
         try (Connection conexion = database.conexion();
              PreparedStatement sentencia = conexion.prepareStatement(sql)) {
             sentencia.setLong(1, id);

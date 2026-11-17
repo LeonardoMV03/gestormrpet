@@ -3,12 +3,17 @@ package net.martinezoft.data;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,14 +23,18 @@ import net.martinezoft.domain.Cliente;
 
 class ClienteRepositoryTest {
 
+    private static final Pattern ISO_8601_UTC =
+            Pattern.compile("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$");
+
     @TempDir
     Path tempDir;
 
+    private Database database;
     private ClienteRepository repositorio;
 
     @BeforeEach
     void prepararRepositorio() {
-        Database database = new Database(tempDir.resolve("clientes.db"));
+        database = new Database(tempDir.resolve("clientes.db"));
         new DatabaseInitializer(database).migrar();
         repositorio = new ClienteRepository(database);
     }
@@ -94,5 +103,44 @@ class ClienteRepositoryTest {
     void debeRechazarNombreVacioEnElDominio() {
         assertThrows(IllegalArgumentException.class,
                 () -> Cliente.nuevo("   ", null, null, null, null));
+    }
+
+    @Test
+    void debeRegistrarCreadoEnEnFormatoIso8601() throws SQLException {
+        Cliente guardado = repositorio.insertar(Cliente.nuevo("Ana", null, null, null, null));
+
+        assertIso8601(leerTimestamp(guardado.id(), "creado_en"), "creado_en");
+        assertNull(leerTimestamp(guardado.id(), "actualizado_en"),
+                "actualizado_en debe ser nulo hasta la primera modificación");
+    }
+
+    @Test
+    void debeRegistrarActualizadoEnEnFormatoIso8601() throws SQLException {
+        Cliente guardado = repositorio.insertar(Cliente.nuevo("Ana", null, null, null, null));
+        Cliente editado = new Cliente(guardado.id(), "Ana Pérez", null, null, null, null, true);
+
+        assertTrue(repositorio.actualizar(editado));
+        assertIso8601(leerTimestamp(guardado.id(), "actualizado_en"), "actualizado_en tras actualizar");
+
+        assertTrue(repositorio.desactivar(guardado.id()));
+        assertIso8601(leerTimestamp(guardado.id(), "actualizado_en"), "actualizado_en tras desactivar");
+    }
+
+    private String leerTimestamp(long id, String columna) throws SQLException {
+        String sql = "SELECT " + columna + " FROM clientes WHERE id = ?";
+        try (Connection conexion = database.conexion();
+             PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+            sentencia.setLong(1, id);
+            try (ResultSet filas = sentencia.executeQuery()) {
+                assertTrue(filas.next(), "El cliente debe existir para leer " + columna);
+                return filas.getString(columna);
+            }
+        }
+    }
+
+    private static void assertIso8601(String valor, String etiqueta) {
+        assertNotNull(valor, etiqueta + " no debe ser nulo");
+        assertTrue(ISO_8601_UTC.matcher(valor).matches(),
+                etiqueta + " debe ser ISO-8601 UTC (YYYY-MM-DDTHH:MM:SSZ): " + valor);
     }
 }

@@ -6,7 +6,7 @@ CREATE TABLE clientes (
   direccion TEXT,
   notas TEXT,
   activo INTEGER NOT NULL DEFAULT 1,
-  creado_en TEXT NOT NULL DEFAULT (datetime('now')),
+  creado_en TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
   actualizado_en TEXT
 );
 
@@ -20,7 +20,7 @@ CREATE TABLE mascotas (
   fecha_nacimiento TEXT,
   notas TEXT,
   activo INTEGER NOT NULL DEFAULT 1,
-  creado_en TEXT NOT NULL DEFAULT (datetime('now')),
+  creado_en TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
   actualizado_en TEXT
 );
 
@@ -39,7 +39,7 @@ CREATE TABLE citas (
   fecha_hora TEXT NOT NULL,
   estado TEXT NOT NULL DEFAULT 'pendiente' CHECK (estado IN ('pendiente','confirmada','atendida','cancelada')),
   notas TEXT,
-  creado_en TEXT NOT NULL DEFAULT (datetime('now'))
+  creado_en TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
 );
 
 CREATE TABLE cita_servicios (
@@ -56,7 +56,7 @@ CREATE TABLE notas_historial (
   fecha TEXT NOT NULL,
   texto TEXT NOT NULL,
   autor TEXT,
-  creado_en TEXT NOT NULL DEFAULT (datetime('now'))
+  creado_en TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
 );
 
 CREATE INDEX idx_mascotas_cliente ON mascotas(cliente_id);

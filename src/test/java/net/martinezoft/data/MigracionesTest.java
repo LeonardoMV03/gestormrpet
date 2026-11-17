@@ -12,12 +12,16 @@ import java.sql.Statement;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class MigracionesTest {
+
+    private static final Pattern ISO_8601_UTC =
+            Pattern.compile("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$");
 
     @TempDir
     Path tempDir;
@@ -82,6 +86,32 @@ class MigracionesTest {
         new DatabaseInitializer(database).migrar();
 
         assertEquals(List.of("1", "2", "3"), versionesAplicadas());
+    }
+
+    @Test
+    void debeUsarTimestampsIso8601EnLosDefaultsDeCreadoEn() throws SQLException {
+        try (Connection conexion = database.conexion(); Statement sentencia = conexion.createStatement()) {
+            sentencia.executeUpdate("INSERT INTO clientes (nombre) VALUES ('Ana')");
+            sentencia.executeUpdate("INSERT INTO mascotas (cliente_id, nombre) VALUES (1, 'Luna')");
+            sentencia.executeUpdate("INSERT INTO citas (mascota_id, fecha_hora) VALUES (1, '2026-11-17T10:00:00Z')");
+            sentencia.executeUpdate(
+                    "INSERT INTO notas_historial (mascota_id, fecha, texto) VALUES (1, '2026-11-17T10:00:00Z', 'Nota')");
+            sentencia.executeUpdate("INSERT INTO usuarios (usuario, clave_hash) VALUES ('admin', 'hash')");
+
+            for (String tabla : List.of("clientes", "mascotas", "citas", "notas_historial", "usuarios")) {
+                String creadoEn = leerPrimerCreadoEn(sentencia, tabla);
+                assertTrue(ISO_8601_UTC.matcher(creadoEn).matches(),
+                        "creado_en de " + tabla + " debe ser ISO-8601 UTC (YYYY-MM-DDTHH:MM:SSZ): " + creadoEn);
+            }
+        }
+    }
+
+    private static String leerPrimerCreadoEn(Statement sentencia, String tabla) throws SQLException {
+        String sql = "SELECT creado_en FROM " + tabla + " ORDER BY id LIMIT 1";
+        try (ResultSet filas = sentencia.executeQuery(sql)) {
+            assertTrue(filas.next(), "Debe existir al menos una fila en " + tabla);
+            return filas.getString("creado_en");
+        }
     }
 
     private List<String> versionesAplicadas() throws SQLException {
