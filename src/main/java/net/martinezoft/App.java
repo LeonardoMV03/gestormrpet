@@ -8,6 +8,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import net.martinezoft.config.AppConfig;
+import net.martinezoft.data.DatabaseInitializer;
+
 /**
  * JavaFX App
  */
@@ -17,6 +20,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        new DatabaseInitializer(AppConfig.rutaBdPorDefecto()).migrar();
         scene = new Scene(loadFXML("primary"), 640, 480);
         stage.setScene(scene);
         stage.show();
