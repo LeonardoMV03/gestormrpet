@@ -163,3 +163,11 @@ Cada transición actualiza label y columna del Project, y deja comentario en el 
 - Si falta información, **pregunta**; no inventes requisitos.
 - Reporta bloqueos y riesgos de inmediato.
 - Al terminar una tarea, indica qué cambió, cómo se verificó y el siguiente paso.
+
+## 15. Estado y roadmap
+
+- **Project de seguimiento:** https://github.com/users/LeonardoMV03/projects/5 (campo `Fase`).
+- **Roadmap y contexto:** https://github.com/LeonardoMV03/gestormrpet/issues/21 (issue pineado).
+- Antes de empezar una feature, revisa el roadmap y el Project; elige un issue con `Fase = Backlog`. **El issue es la fuente de verdad del alcance.**
+- Mantén actualizados el label `fase:*` y la columna `Fase` del Project en cada transición.
+- Siguiente feature recomendada: F1.1 (`#10`).
