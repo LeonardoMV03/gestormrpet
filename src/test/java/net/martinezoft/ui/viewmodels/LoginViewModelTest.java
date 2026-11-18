@@ -44,6 +44,14 @@ class LoginViewModelTest {
     }
 
     @Test
+    void debeDeshabilitarInicioConContrasenaSoloEspacios() {
+        vm.usuarioProperty().set("admin");
+        vm.passwordProperty().set("   ");
+
+        assertFalse(vm.puedeIniciarProperty().get(), "Una contraseña solo de espacios no debe habilitar el inicio");
+    }
+
+    @Test
     void debeHabilitarInicioConUsuarioYContrasenaRellenos() {
         vm.usuarioProperty().set("admin");
         vm.passwordProperty().set("admin");

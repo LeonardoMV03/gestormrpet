@@ -32,7 +32,7 @@ public class LoginViewModel {
     public LoginViewModel(AuthService auth) {
         this.auth = Objects.requireNonNull(auth, "El servicio de autenticación es obligatorio");
         this.puedeIniciar = Bindings.createBooleanBinding(
-                () -> !usuario.get().isBlank() && !password.get().isEmpty(),
+                () -> !usuario.get().isBlank() && !password.get().isBlank(),
                 usuario, password);
     }
 
