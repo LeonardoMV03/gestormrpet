@@ -97,6 +97,17 @@ class LoginViewModelTest {
     }
 
     @Test
+    void debeLimpiarLaContrasenaTrasExito() {
+        vm.usuarioProperty().set("admin");
+        vm.passwordProperty().set("admin");
+
+        vm.iniciarSesion();
+
+        assertTrue(vm.autenticadoProperty().get());
+        assertEquals("", vm.passwordProperty().get());
+    }
+
+    @Test
     void debeMostrarMensajeTecnicoSinDetallesSiFallaLaBaseDeDatos() {
         Path inexistente = tempDir.resolve("no-existe").resolve("bd.db");
         AuthService auth = new AuthService(
