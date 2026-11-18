@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import net.martinezoft.ui.organisms.SidebarNav?>
+
+<fx:root type="javafx.scene.layout.BorderPane" styleClass="pagina-principal" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <VBox fx:id="bannerAviso" styleClass="banner-aviso">
+         <children>
+            <Label fx:id="textoAviso" styleClass="banner-aviso-texto" wrapText="true" />
+         </children>
+      </VBox>
+   </top>
+   <left>
+      <SidebarNav fx:id="sidebar" />
+   </left>
+   <center>
+      <StackPane fx:id="contenido" styleClass="contenido-principal" />
+   </center>
+</fx:root>

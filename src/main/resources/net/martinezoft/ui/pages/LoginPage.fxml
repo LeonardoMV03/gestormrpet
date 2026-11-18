@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
+<?import net.martinezoft.ui.templates.LoginTemplate?>
+
+<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <LoginTemplate fx:id="plantilla" />
+   </children>
+</fx:root>

@@ -74,6 +74,8 @@ Niveles y composición (de menor a mayor):
 
 Reglas:
 - Cada componente = `.java` + `.fxml` (+ `.css` si aplica).
+- Excepción: los **átomos sin layout** (`AppButton`, `AppTextField`, `AppPasswordField`) son clases Java puras que aplican su clase CSS en el constructor; no tienen `.fxml`.
+- Componentes con `.fxml` usan `fx:root` (la instancia es la raíz y el controller) vía `ui/CargadorFxml`; la composición se hace en el constructor o en el FXML declarando el componente como elemento.
 - Composición con `<fx:include>`; evitar duplicar markup.
 - Nombres: `App*` (átomos), `*Field|*Card` (moléculas), `*Table|*Form|*Panel` (organismos), `*Template`, `*Page`.
 - Estilos **solo** por clases CSS y tokens; **nunca** `setStyle()` inline.

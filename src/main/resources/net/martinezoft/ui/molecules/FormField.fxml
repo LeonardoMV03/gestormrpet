@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.StackPane?>
+
+<fx:root type="javafx.scene.layout.VBox" spacing="6.0" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label fx:id="etiqueta" styleClass="form-field-etiqueta" />
+      <StackPane fx:id="contenedorControl" />
+      <Label fx:id="mensajeError" styleClass="form-field-error" wrapText="true" />
+   </children>
+</fx:root>

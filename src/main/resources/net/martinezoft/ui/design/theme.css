@@ -1,0 +1,132 @@
+/* Clases de componente. Solo usan tokens de tokens.css; no hay valores hex aquí. */
+
+.pagina-login,
+.pagina-principal {
+    -fx-background-color: -color-bg;
+}
+
+/* Átomos */
+.app-button {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 8px;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 8px;
+    -fx-padding: 8 16 8 16;
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-text;
+    -fx-cursor: hand;
+}
+.app-button:hover {
+    -fx-border-color: -color-primary;
+}
+.app-button:disabled {
+    -fx-opacity: 0.5;
+    -fx-cursor: default;
+}
+
+.app-button.boton-primario {
+    -fx-background-color: -color-primary;
+    -fx-border-color: transparent;
+    -fx-text-fill: -color-surface;
+    -fx-font-weight: bold;
+}
+.app-button.boton-primario:hover {
+    -fx-background-color: -color-primary-hover;
+}
+
+.app-button.boton-peligro {
+    -fx-text-fill: -color-danger;
+}
+
+.app-button.boton-navegacion {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 10 14 10 14;
+}
+.app-button.boton-navegacion:hover {
+    -fx-background-color: -color-bg;
+    -fx-border-color: transparent;
+}
+.app-button.boton-navegacion.activo {
+    -fx-background-color: -color-primary-suave;
+    -fx-text-fill: -color-primary;
+    -fx-font-weight: bold;
+}
+
+.app-text-field,
+.app-password-field {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 8px;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 8px;
+    -fx-padding: 8 10 8 10;
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-text;
+}
+.app-text-field:focused,
+.app-password-field:focused {
+    -fx-border-color: -color-primary;
+}
+
+/* Moléculas */
+.form-field-etiqueta {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text;
+}
+.form-field-error {
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-danger;
+}
+
+/* Organismos */
+.sidebar {
+    -fx-background-color: -color-surface;
+    -fx-padding: 16;
+    -fx-border-color: transparent -color-border transparent transparent;
+    -fx-min-width: 200;
+    -fx-pref-width: 200;
+}
+.sidebar-titulo {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-primary;
+    -fx-padding: 0 0 16 0;
+}
+
+/* Templates */
+.tarjeta-login {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 12px;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 12px;
+    -fx-padding: 32;
+}
+
+.banner-aviso {
+    -fx-background-color: -color-warning-suave;
+    -fx-border-color: -color-warning;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 10 16 10 16;
+}
+.banner-aviso-texto {
+    -fx-text-fill: -color-warning;
+    -fx-font-size: 13px;
+}
+
+.contenido-principal {
+    -fx-background-color: -color-bg;
+    -fx-padding: 24;
+}
+
+/* Páginas */
+.titulo-pagina {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text;
+}
+.texto-secundario {
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-text-secundario;
+}
