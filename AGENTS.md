@@ -122,19 +122,16 @@ mvn -B verify              # compilación + pruebas (CI)
 
 ## 10. Flujo multiagente por feature
 
-Roles: **planificador → implementador → tester → revisor**, coordinados por el orquestador.
+Roles: **planificador** (plan corto) → **implementador** (código + tests) → **revisor** (solo en cambios de riesgo).
 
-1. **Intake**: issue en GitHub (plantilla, labels `tipo:*`, `fase:plan`, milestone).
-2. **Plan**: el planificador escribe el plan y pide aprobación. **Gate: no implementar sin aprobación.**
-3. **Implementación**: rama `feature/<slug>` desde `develop`; el implementador codea y commitea.
-4. **Test**: el tester agrega/ejecuta `mvn test`; publica resultados.
-5. **Review**: el revisor audita diff vs plan y este archivo; veredicto `APROBADO`/`BLOQUEADO`.
-6. **PR**: `gh pr create --base develop`, con `Closes #<issue>` y checklist DoD.
-7. **CI**: `gh pr checks --watch`; debe estar verde.
-8. **Merge**: **lo hace el usuario** (squash). La IA nunca mergea.
-9. **Cierre**: label `fase:listo`, borrar rama, actualizar tablero.
+1. **Intake**: issue en GitHub con label `tipo:*` y `prioridad:*`. Criterios de aceptación en el cuerpo.
+2. **Plan**: breve, en el issue. Para cambios de riesgo (auth, esquema, migraciones) el planificador pide aprobación antes de implementar.
+3. **Implementación**: rama `feature/<slug>` desde `develop`; el implementador codea, escribe sus tests y commitea. Verifica con `mvn -B verify`.
+4. **Revisión** (opcional, obligatoria en auth, esquema o migraciones): el revisor audita el diff vs criterios y AGENTS.md; emite `APROBADO`/`BLOQUEADO`.
+5. **PR**: `gh pr create --base develop` con `Closes #<issue>`. Branch protection exige CI verde.
+6. **Merge**: **lo hace el usuario** (squash, borrado de rama). La IA nunca mergea.
 
-Cada transición actualiza label y columna del Project, y deja comentario en el issue.
+El estado de un issue es su estado en GitHub (abierto = pendiente, cerrado = hecho). No se usan labels `fase:*` ni Project.
 
 ## 11. Git
 
@@ -148,7 +145,7 @@ Cada transición actualiza label y columna del Project, y deja comentario en el 
 
 - JUnit 5 para dominio, servicios y repositorios (SQLite temporal por test).
 - TestFX solo para smoke tests de UI.
-- **DoD**: `mvn compile` + `mvn test` verdes, CI verde, revisor APROBADO, sin secretos, PR mergeado y issue cerrado.
+- **DoD**: `mvn -B verify` verde (local y CI), tests de la lógica nueva, sin secretos, PR squash-mergeado por el usuario e issue cerrado. Revisor APROBADO solo si aplica el punto 4 del flujo.
 
 ## 13. Seguridad
 
@@ -166,8 +163,7 @@ Cada transición actualiza label y columna del Project, y deja comentario en el 
 
 ## 15. Estado y roadmap
 
-- **Project de seguimiento:** https://github.com/users/LeonardoMV03/projects/5 (campo `Fase`).
 - **Roadmap y contexto:** https://github.com/LeonardoMV03/gestormrpet/issues/21 (issue pineado).
-- Antes de empezar una feature, revisa el roadmap y el Project; elige un issue con `Fase = Backlog`. **El issue es la fuente de verdad del alcance.**
-- Mantén actualizados el label `fase:*` y la columna `Fase` del Project en cada transición.
-- Siguiente feature recomendada: F1.1 (`#10`).
+- Antes de empezar una feature, revisa el roadmap y elige un issue abierto y no bloqueado. **El issue es la fuente de verdad del alcance.**
+- Labels vigentes: `tipo:feature|bug|infra|docs`, `prioridad:alta|media|baja`, `bloqueado`.
+- Protección de `main` y `develop`: PR obligatorio y check `Compilar y probar` requerido. Sin force-push ni borrado.
