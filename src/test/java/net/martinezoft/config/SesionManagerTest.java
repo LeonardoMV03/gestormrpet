@@ -42,6 +42,17 @@ class SesionManagerTest {
     }
 
     @Test
+    void toStringDeSesionNoDebeExponerElHash() {
+        Usuario conHash = new Usuario(1L, "admin", "hashSecretoPrueba", false);
+        SesionManager manager = new SesionManager(new RelojMutable(INICIO));
+
+        String texto = manager.iniciar(conHash).toString();
+
+        assertFalse(texto.contains("hashSecretoPrueba"));
+        assertTrue(texto.contains("admin"));
+    }
+
+    @Test
     void debeSeguirActivaJustoAntesDeLasDoceHoras() {
         RelojMutable reloj = new RelojMutable(INICIO);
         SesionManager manager = new SesionManager(reloj);
