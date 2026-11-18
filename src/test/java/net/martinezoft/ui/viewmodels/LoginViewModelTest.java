@@ -52,6 +52,17 @@ class LoginViewModelTest {
     }
 
     @Test
+    void noDebeIntentarIniciarSesionConCamposVacios() {
+        vm.usuarioProperty().set("");
+        vm.passwordProperty().set("");
+
+        vm.iniciarSesion();
+
+        assertEquals("", vm.errorProperty().get(), "Con campos vacíos no debe haber intento ni mensaje de error");
+        assertFalse(vm.autenticadoProperty().get());
+    }
+
+    @Test
     void debeHabilitarInicioConUsuarioYContrasenaRellenos() {
         vm.usuarioProperty().set("admin");
         vm.passwordProperty().set("admin");

@@ -41,6 +41,9 @@ public class LoginViewModel {
      * contraseña; nunca expone detalles de la excepción.
      */
     public void iniciarSesion() {
+        if (!puedeIniciar.get()) {
+            return;
+        }
         try {
             Optional<Sesion> sesion = auth.iniciarSesion(usuario.get(), password.get());
             if (sesion.isPresent()) {
