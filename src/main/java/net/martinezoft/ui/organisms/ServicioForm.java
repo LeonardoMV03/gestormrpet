@@ -24,6 +24,8 @@ public class ServicioForm extends VBox {
     @FXML
     private HBox zonaAccion;
     @FXML
+    private Label etiquetaAyuda;
+    @FXML
     private Label etiquetaMensaje;
     @FXML
     private Label etiquetaError;
@@ -67,6 +69,10 @@ public class ServicioForm extends VBox {
         botonGuardar.setOnAction(e -> vm.guardar());
         botonDesactivar.setOnAction(e -> alDesactivar.run());
         zonaAccion.getChildren().setAll(botonNuevo, botonDesactivar, botonGuardar);
+
+        etiquetaAyuda.setText("Completa el nombre y un precio válido para guardar");
+        etiquetaAyuda.visibleProperty().bind(vm.puedeGuardarProperty().not());
+        etiquetaAyuda.managedProperty().bind(etiquetaAyuda.visibleProperty());
 
         etiquetaMensaje.textProperty().bind(vm.mensajeProperty());
         etiquetaMensaje.visibleProperty().bind(vm.mensajeProperty().isNotEmpty());

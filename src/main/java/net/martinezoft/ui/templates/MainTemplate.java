@@ -56,13 +56,14 @@ public class MainTemplate extends BorderPane {
         Objects.requireNonNull(destinos, "Los destinos son obligatorios");
         Objects.requireNonNull(inicial, "El destino inicial es obligatorio");
         Objects.requireNonNull(alNavegar, "La acción de navegación es obligatoria");
+        sidebar.getDestinos().setAll(destinos);
+        sidebar.setSeleccionado(inicial);
         sidebar.seleccionadoProperty().addListener((observable, anterior, actual) -> {
             if (actual != null) {
                 alNavegar.accept(actual);
             }
         });
-        sidebar.getDestinos().setAll(destinos);
-        sidebar.setSeleccionado(inicial);
+        alNavegar.accept(inicial);
     }
 
     public void setContenido(Node nodo) {

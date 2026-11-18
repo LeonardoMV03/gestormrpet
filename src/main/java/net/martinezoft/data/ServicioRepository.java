@@ -68,8 +68,9 @@ public final class ServicioRepository {
     }
 
     /**
-     * Busca por nombre sin distinguir mayúsculas e incluyendo inactivos. Es la
-     * base de la validación de unicidad del servicio.
+     * Consulta exacta por nombre incluyendo inactivos. El {@code COLLATE NOCASE}
+     * de SQLite solo pliega mayúsculas ASCII, por lo que no sirve para comparar
+     * nombres Unicode; la unicidad real la garantiza {@code ServicioService}.
      */
     public Optional<Servicio> buscarPorNombre(String nombre) throws SQLException {
         String sql = "SELECT " + COLUMNAS + " FROM servicios WHERE nombre = ? COLLATE NOCASE";

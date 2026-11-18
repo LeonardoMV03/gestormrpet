@@ -61,6 +61,39 @@ public class ServiciosViewModel {
                 volcarFormulario(actual);
             }
         });
+        configurarValidacionEnVivo();
+    }
+
+    private void configurarValidacionEnVivo() {
+        nombre.addListener((observable, anterior, actual) -> {
+            if (!textoVacio(actual)) {
+                errorNombre.set("");
+            }
+        });
+        precioTexto.addListener((observable, anterior, actual) -> {
+            if (textoVacio(actual)) {
+                errorPrecio.set("");
+                return;
+            }
+            try {
+                Dinero.parsearCentavos(actual);
+                errorPrecio.set("");
+            } catch (IllegalArgumentException e) {
+                errorPrecio.set(e.getMessage());
+            }
+        });
+        duracionTexto.addListener((observable, anterior, actual) -> {
+            if (textoVacio(actual)) {
+                errorDuracion.set("");
+                return;
+            }
+            try {
+                parsearDuracion(actual);
+                errorDuracion.set("");
+            } catch (IllegalArgumentException e) {
+                errorDuracion.set(e.getMessage());
+            }
+        });
     }
 
     public void cargar() {

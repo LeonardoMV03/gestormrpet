@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -42,12 +43,16 @@ public class ServiciosPage extends VBox {
             return;
         }
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.initOwner(getScene() != null ? getScene().getWindow() : null);
         confirmacion.setTitle("Desactivar servicio");
         confirmacion.setHeaderText("¿Desactivar \"" + seleccionado.nombre() + "\"?");
         confirmacion.setContentText(
-                "El servicio dejará de aparecer en la lista, pero se conservará en el historial.");
+                "El servicio dejará de aparecer en la lista, pero sus datos se conservan.");
+        ButtonType desactivar = new ButtonType("Desactivar", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        confirmacion.getButtonTypes().setAll(desactivar, cancelar);
         Optional<ButtonType> respuesta = confirmacion.showAndWait();
-        if (respuesta.isPresent() && respuesta.get() == ButtonType.OK) {
+        if (respuesta.isPresent() && respuesta.get() == desactivar) {
             vm.desactivarSeleccionado();
         }
     }

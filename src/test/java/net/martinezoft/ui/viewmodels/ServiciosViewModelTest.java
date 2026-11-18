@@ -157,6 +157,42 @@ class ServiciosViewModelTest {
     }
 
     @Test
+    void debeSetearErrorDePrecioEnVivoSinLlamarAGuardar() {
+        vm.precioTextoProperty().set("abc");
+
+        assertFalse(vm.errorPrecioProperty().get().isBlank());
+        assertTrue(vm.mensajeProperty().get().isEmpty());
+        assertTrue(vm.servicios().isEmpty());
+    }
+
+    @Test
+    void debeLimpiarErrorDePrecioEnVivoCuandoVuelveASerValido() {
+        vm.precioTextoProperty().set("abc");
+        assertFalse(vm.errorPrecioProperty().get().isBlank());
+
+        vm.precioTextoProperty().set("150,50");
+
+        assertEquals("", vm.errorPrecioProperty().get());
+    }
+
+    @Test
+    void debeSetearErrorDeDuracionEnVivoConValorNegativo() {
+        vm.duracionTextoProperty().set("-5");
+
+        assertFalse(vm.errorDuracionProperty().get().isBlank());
+        assertTrue(vm.servicios().isEmpty());
+    }
+
+    @Test
+    void noDebeMostrarErrorDeNombreConElFormularioVacio() {
+        assertEquals("", vm.errorNombreProperty().get());
+
+        vm.precioTextoProperty().set("abc");
+
+        assertEquals("", vm.errorNombreProperty().get());
+    }
+
+    @Test
     void debeMapearNombreDuplicadoAErrorNombre() throws Exception {
         servicio.crear(Servicio.nuevo("Baño", null, 15050, 45));
         vm.cargar();
