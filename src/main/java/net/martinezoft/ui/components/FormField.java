@@ -1,4 +1,4 @@
-package net.martinezoft.ui.molecules;
+package net.martinezoft.ui.components;
 
 import java.util.Objects;
 

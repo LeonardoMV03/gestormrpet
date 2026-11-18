@@ -11,7 +11,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import net.martinezoft.ui.CargadorFxml;
-import net.martinezoft.ui.organisms.SidebarNav;
+import net.martinezoft.ui.components.SidebarNav;
 import net.martinezoft.ui.viewmodels.ShellViewModel;
 
 /**

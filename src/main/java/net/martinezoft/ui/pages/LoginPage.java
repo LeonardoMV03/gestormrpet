@@ -5,7 +5,7 @@ import java.util.Objects;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
 import net.martinezoft.ui.CargadorFxml;
-import net.martinezoft.ui.organisms.LoginForm;
+import net.martinezoft.ui.components.LoginForm;
 import net.martinezoft.ui.templates.LoginTemplate;
 import net.martinezoft.ui.viewmodels.LoginViewModel;
 

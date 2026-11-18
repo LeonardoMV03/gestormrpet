@@ -1,15 +1,14 @@
-package net.martinezoft.ui.organisms;
+package net.martinezoft.ui.components;
 
 import java.util.Objects;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import net.martinezoft.ui.CargadorFxml;
-import net.martinezoft.ui.atoms.AppButton;
-import net.martinezoft.ui.atoms.AppTextField;
-import net.martinezoft.ui.molecules.FormField;
 import net.martinezoft.ui.viewmodels.ServiciosViewModel;
 
 /**
@@ -30,22 +29,18 @@ public class ServicioForm extends VBox {
     @FXML
     private Label etiquetaError;
 
-    private final AppButton botonNuevo = new AppButton("Nuevo", AppButton.Variante.SECUNDARIA);
-    private final AppButton botonGuardar = new AppButton("Guardar", AppButton.Variante.PRIMARIA);
-    private final AppButton botonDesactivar = new AppButton("Desactivar", AppButton.Variante.PELIGRO);
-
     public ServicioForm(ServiciosViewModel vm, Runnable alDesactivar) {
         Objects.requireNonNull(vm, "El ViewModel de servicios es obligatorio");
         Objects.requireNonNull(alDesactivar, "La acción de desactivar es obligatoria");
         CargadorFxml.cargar(this, ServicioForm.class);
 
-        AppTextField campoNombre = new AppTextField();
+        TextField campoNombre = new TextField();
         campoNombre.setPromptText("Baño");
-        AppTextField campoDescripcion = new AppTextField();
+        TextField campoDescripcion = new TextField();
         campoDescripcion.setPromptText("Descripción breve");
-        AppTextField campoPrecio = new AppTextField();
+        TextField campoPrecio = new TextField();
         campoPrecio.setPromptText("150,00");
-        AppTextField campoDuracion = new AppTextField();
+        TextField campoDuracion = new TextField();
         campoDuracion.setPromptText("45");
 
         campoNombre.textProperty().bindBidirectional(vm.nombreProperty());
@@ -62,6 +57,12 @@ public class ServicioForm extends VBox {
         formDuracion.errorProperty().bind(vm.errorDuracionProperty());
 
         campos.getChildren().setAll(formNombre, formDescripcion, formPrecio, formDuracion);
+
+        Button botonNuevo = new Button("Nuevo");
+        Button botonGuardar = new Button("Guardar");
+        botonGuardar.getStyleClass().add("boton-primario");
+        Button botonDesactivar = new Button("Desactivar");
+        botonDesactivar.getStyleClass().add("boton-peligro");
 
         botonGuardar.disableProperty().bind(vm.puedeGuardarProperty().not());
         botonDesactivar.disableProperty().bind(vm.seleccionadoProperty().isNull());

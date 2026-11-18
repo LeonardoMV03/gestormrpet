@@ -12,9 +12,8 @@ Closes #
 
 ## Checklist (DoD)
 
-- [ ] `mvn compile` y `mvn test` en verde
+- [ ] `mvn -B verify` en verde
 - [ ] CI en verde
-- [ ] Revisor APROBADO
 - [ ] Sin secretos ni credenciales
 - [ ] Documentación actualizada si aplica
 

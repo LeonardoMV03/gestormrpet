@@ -5,8 +5,8 @@
     -fx-background-color: -color-bg;
 }
 
-/* Átomos */
-.app-button {
+/* Controles base */
+.button {
     -fx-background-color: -color-surface;
     -fx-background-radius: 8px;
     -fx-border-color: -color-border;
@@ -16,46 +16,46 @@
     -fx-text-fill: -color-text;
     -fx-cursor: hand;
 }
-.app-button:hover {
+.button:hover {
     -fx-border-color: -color-primary;
 }
-.app-button:disabled {
+.button:disabled {
     -fx-opacity: 0.5;
     -fx-cursor: default;
 }
 
-.app-button.boton-primario {
+.button.boton-primario {
     -fx-background-color: -color-primary;
     -fx-border-color: transparent;
     -fx-text-fill: -color-surface;
     -fx-font-weight: bold;
 }
-.app-button.boton-primario:hover {
+.button.boton-primario:hover {
     -fx-background-color: -color-primary-hover;
 }
 
-.app-button.boton-peligro {
+.button.boton-peligro {
     -fx-text-fill: -color-danger;
 }
 
-.app-button.boton-navegacion {
+.button.boton-navegacion {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-alignment: CENTER-LEFT;
     -fx-padding: 10 14 10 14;
 }
-.app-button.boton-navegacion:hover {
+.button.boton-navegacion:hover {
     -fx-background-color: -color-bg;
     -fx-border-color: transparent;
 }
-.app-button.boton-navegacion.activo {
+.button.boton-navegacion.activo {
     -fx-background-color: -color-primary-suave;
     -fx-text-fill: -color-primary;
     -fx-font-weight: bold;
 }
 
-.app-text-field,
-.app-password-field {
+.text-field,
+.password-field {
     -fx-background-color: -color-surface;
     -fx-background-radius: 8px;
     -fx-border-color: -color-border;
@@ -64,8 +64,8 @@
     -fx-font-size: 13px;
     -fx-text-fill: -color-text;
 }
-.app-text-field:focused,
-.app-password-field:focused {
+.text-field:focused,
+.password-field:focused {
     -fx-border-color: -color-primary;
 }
 

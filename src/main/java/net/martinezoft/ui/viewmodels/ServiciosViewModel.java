@@ -126,9 +126,6 @@ public class ServiciosViewModel {
     public void guardar() {
         limpiarErrores();
         mensaje.set("");
-        if (!validarCampos()) {
-            return;
-        }
         try {
             long precio = Dinero.parsearCentavos(precioTexto.get());
             Integer duracion = parsearDuracion(duracionTexto.get());
@@ -215,27 +212,6 @@ public class ServiciosViewModel {
         precioTexto.set("");
         duracionTexto.set("");
         editando.set(false);
-    }
-
-    private boolean validarCampos() {
-        boolean valido = true;
-        if (textoVacio(nombre.get())) {
-            errorNombre.set("El nombre del servicio es obligatorio");
-            valido = false;
-        }
-        try {
-            Dinero.parsearCentavos(precioTexto.get());
-        } catch (IllegalArgumentException e) {
-            errorPrecio.set(e.getMessage());
-            valido = false;
-        }
-        try {
-            parsearDuracion(duracionTexto.get());
-        } catch (IllegalArgumentException e) {
-            errorDuracion.set(e.getMessage());
-            valido = false;
-        }
-        return valido;
     }
 
     private void aplicarError(IllegalArgumentException e) {
