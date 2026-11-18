@@ -11,8 +11,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import net.martinezoft.domain.Servicio;
 import net.martinezoft.ui.CargadorFxml;
-import net.martinezoft.ui.organisms.ServicioForm;
-import net.martinezoft.ui.organisms.ServiciosTable;
+import net.martinezoft.ui.components.ServicioForm;
+import net.martinezoft.ui.components.ServiciosTable;
 import net.martinezoft.ui.viewmodels.ServiciosViewModel;
 
 /**

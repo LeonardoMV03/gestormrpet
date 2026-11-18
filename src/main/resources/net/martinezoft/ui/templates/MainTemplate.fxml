@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import net.martinezoft.ui.organisms.SidebarNav?>
+<?import net.martinezoft.ui.components.SidebarNav?>
 
 <fx:root type="javafx.scene.layout.BorderPane" styleClass="pagina-principal" xmlns:fx="http://javafx.com/fxml/1">
    <top>

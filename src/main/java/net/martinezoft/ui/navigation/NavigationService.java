@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import net.martinezoft.di.AppContext;
-import net.martinezoft.ui.organisms.SidebarNav;
+import net.martinezoft.ui.components.SidebarNav;
 import net.martinezoft.ui.pages.InicioPage;
 import net.martinezoft.ui.pages.LoginPage;
 import net.martinezoft.ui.pages.ServiciosPage;

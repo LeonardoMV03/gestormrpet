@@ -34,7 +34,6 @@ public final class ServicioService {
 
     public Servicio crear(Servicio servicio) throws SQLException {
         Objects.requireNonNull(servicio, "El servicio es obligatorio");
-        validar(servicio);
         asegurarNombreUnico(servicio.nombre(), null);
         return repositorio.insertar(servicio);
     }
@@ -44,7 +43,6 @@ public final class ServicioService {
         if (servicio.id() == null) {
             throw new IllegalArgumentException("No se puede actualizar un servicio sin id");
         }
-        validar(servicio);
         asegurarNombreUnico(servicio.nombre(), servicio.id());
         if (!repositorio.actualizar(servicio)) {
             throw new IllegalArgumentException("El servicio no existe o está desactivado");
@@ -70,17 +68,5 @@ public final class ServicioService {
 
     private static String normalizar(String nombre) {
         return Normalizer.normalize(nombre.trim(), Normalizer.Form.NFC);
-    }
-
-    private static void validar(Servicio servicio) {
-        if (servicio.nombre() == null || servicio.nombre().isBlank()) {
-            throw new IllegalArgumentException("El nombre del servicio es obligatorio");
-        }
-        if (servicio.precioCentavos() < 0) {
-            throw new IllegalArgumentException("El precio no puede ser negativo");
-        }
-        if (servicio.duracionMin() != null && servicio.duracionMin() < 0) {
-            throw new IllegalArgumentException("La duración no puede ser negativa");
-        }
     }
 }

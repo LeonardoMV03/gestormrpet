@@ -1,15 +1,14 @@
-package net.martinezoft.ui.organisms;
+package net.martinezoft.ui.components;
 
 import java.util.Objects;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import net.martinezoft.ui.CargadorFxml;
-import net.martinezoft.ui.atoms.AppButton;
-import net.martinezoft.ui.atoms.AppPasswordField;
-import net.martinezoft.ui.atoms.AppTextField;
-import net.martinezoft.ui.molecules.FormField;
 import net.martinezoft.ui.viewmodels.LoginViewModel;
 
 /**
@@ -23,15 +22,13 @@ public class LoginForm extends VBox {
     @FXML
     private HBox zonaAccion;
 
-    private final AppButton botonEntrar = new AppButton("Entrar", AppButton.Variante.PRIMARIA);
-
     public LoginForm(LoginViewModel vm) {
         Objects.requireNonNull(vm, "El ViewModel de login es obligatorio");
         CargadorFxml.cargar(this, LoginForm.class);
 
-        AppTextField campoUsuario = new AppTextField();
+        TextField campoUsuario = new TextField();
         campoUsuario.setPromptText("admin");
-        AppPasswordField campoPassword = new AppPasswordField();
+        PasswordField campoPassword = new PasswordField();
 
         campoUsuario.textProperty().bindBidirectional(vm.usuarioProperty());
         campoPassword.textProperty().bindBidirectional(vm.passwordProperty());
@@ -42,6 +39,8 @@ public class LoginForm extends VBox {
 
         campos.getChildren().addAll(formUsuario, formPassword);
 
+        Button botonEntrar = new Button("Entrar");
+        botonEntrar.getStyleClass().add("boton-primario");
         botonEntrar.disableProperty().bind(vm.puedeIniciarProperty().not());
         botonEntrar.setDefaultButton(true);
         botonEntrar.setOnAction(e -> vm.iniciarSesion());

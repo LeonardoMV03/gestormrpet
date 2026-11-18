@@ -1,4 +1,4 @@
-package net.martinezoft.ui.organisms;
+package net.martinezoft.ui.components;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,9 +10,9 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import net.martinezoft.ui.CargadorFxml;
-import net.martinezoft.ui.atoms.AppButton;
 
 /**
  * Menú lateral. Los destinos se declaran desde fuera y la selección queda
@@ -30,14 +30,15 @@ public class SidebarNav extends VBox {
 
     private final ObservableList<Destino> destinos = FXCollections.observableArrayList();
     private final ObjectProperty<Destino> seleccionado = new SimpleObjectProperty<>();
-    private final Map<Destino, AppButton> botones = new HashMap<>();
-    private final AppButton botonCerrarSesion = new AppButton("Cerrar sesión");
+    private final Map<Destino, Button> botones = new HashMap<>();
     private Runnable alCerrarSesion = () -> { };
 
     public SidebarNav() {
         CargadorFxml.cargar(this, SidebarNav.class);
         destinos.addListener((InvalidationListener) observable -> reconstruirBotones());
         seleccionado.addListener((observable, anterior, actual) -> marcarActivo());
+
+        Button botonCerrarSesion = new Button("Cerrar sesión");
         botonCerrarSesion.setMaxWidth(Double.MAX_VALUE);
         botonCerrarSesion.setOnAction(e -> alCerrarSesion.run());
         getChildren().add(botonCerrarSesion);
@@ -67,7 +68,8 @@ public class SidebarNav extends VBox {
         listaDestinos.getChildren().clear();
         botones.clear();
         for (Destino destino : destinos) {
-            AppButton boton = new AppButton(destino.etiqueta(), AppButton.Variante.NAVEGACION);
+            Button boton = new Button(destino.etiqueta());
+            boton.getStyleClass().add("boton-navegacion");
             boton.setMaxWidth(Double.MAX_VALUE);
             boton.setOnAction(e -> setSeleccionado(destino));
             botones.put(destino, boton);

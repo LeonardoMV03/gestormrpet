@@ -1,4 +1,4 @@
-package net.martinezoft.ui.organisms;
+package net.martinezoft.ui.components;
 
 import java.util.Objects;
 
