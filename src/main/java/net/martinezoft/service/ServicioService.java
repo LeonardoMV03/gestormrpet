@@ -1,6 +1,7 @@
 package net.martinezoft.service;
 
 import java.sql.SQLException;
+import java.text.Normalizer;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -58,10 +59,17 @@ public final class ServicioService {
     }
 
     private void asegurarNombreUnico(String nombre, Long idPropio) throws SQLException {
-        Optional<Servicio> existente = repositorio.buscarPorNombre(nombre);
-        if (existente.isPresent() && !existente.get().id().equals(idPropio)) {
+        String normalizado = normalizar(nombre);
+        boolean duplicado = repositorio.listarTodos().stream()
+                .filter(servicio -> !Objects.equals(servicio.id(), idPropio))
+                .anyMatch(servicio -> normalizar(servicio.nombre()).equalsIgnoreCase(normalizado));
+        if (duplicado) {
             throw new IllegalArgumentException(MENSAJE_NOMBRE_DUPLICADO);
         }
+    }
+
+    private static String normalizar(String nombre) {
+        return Normalizer.normalize(nombre.trim(), Normalizer.Form.NFC);
     }
 
     private static void validar(Servicio servicio) {

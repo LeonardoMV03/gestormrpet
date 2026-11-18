@@ -96,6 +96,23 @@ public final class ServicioRepository {
     }
 
     /**
+     * Lista todas las filas, activas e inactivas, ordenadas por nombre. Es la
+     * base para validar la unicidad sin depender del plegado ASCII de SQLite.
+     */
+    public List<Servicio> listarTodos() throws SQLException {
+        String sql = "SELECT " + COLUMNAS + " FROM servicios ORDER BY nombre COLLATE NOCASE";
+        List<Servicio> servicios = new ArrayList<>();
+        try (Connection conexion = database.conexion();
+             PreparedStatement sentencia = conexion.prepareStatement(sql);
+             ResultSet filas = sentencia.executeQuery()) {
+            while (filas.next()) {
+                servicios.add(mapear(filas));
+            }
+        }
+        return servicios;
+    }
+
+    /**
      * Actualiza los datos editables de un servicio activo.
      *
      * @return {@code true} si se actualizó alguna fila.

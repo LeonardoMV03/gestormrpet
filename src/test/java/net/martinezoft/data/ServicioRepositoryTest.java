@@ -56,6 +56,18 @@ class ServicioRepositoryTest {
     }
 
     @Test
+    void debeListarTodosIncluyendoActivosEInactivos() throws SQLException {
+        Servicio activo = repositorio.insertar(Servicio.nuevo("Baño", null, 15050, 45));
+        Servicio inactivo = repositorio.insertar(Servicio.nuevo("Corte", null, 20000, 60));
+        repositorio.desactivar(inactivo.id());
+        Servicio inactivoPersistido = new Servicio(inactivo.id(), "Corte", null, 20000, 60, false);
+
+        List<Servicio> todos = repositorio.listarTodos();
+
+        assertEquals(List.of(activo, inactivoPersistido), todos);
+    }
+
+    @Test
     void debeActualizarUnServicioActivo() throws SQLException {
         Servicio guardado = repositorio.insertar(Servicio.nuevo("Baño", null, 15050, 45));
         Servicio editado = new Servicio(guardado.id(), "Baño premium", "Con secado",

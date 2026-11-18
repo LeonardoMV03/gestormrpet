@@ -63,6 +63,14 @@ class ServicioServiceTest {
     }
 
     @Test
+    void debeRechazarNombreDuplicadoConMayusculasNoAscii() throws SQLException {
+        servicio.crear(Servicio.nuevo("baño", null, 15050, 45));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> servicio.crear(Servicio.nuevo("BAÑO", null, 20000, 60)));
+    }
+
+    @Test
     void debeRechazarNombreDeUnServicioDesactivado() throws SQLException {
         Servicio creado = servicio.crear(Servicio.nuevo("Baño", null, 15050, 45));
         servicio.desactivar(creado.id());
@@ -88,6 +96,30 @@ class ServicioServiceTest {
         Servicio corte = servicio.crear(Servicio.nuevo("Corte", null, 20000, 60));
 
         Servicio editado = new Servicio(corte.id(), "Baño", null, 20000, 60, true);
+
+        IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
+                () -> servicio.actualizar(editado));
+        assertEquals(ServicioService.MENSAJE_NOMBRE_DUPLICADO, error.getMessage());
+    }
+
+    @Test
+    void debePermitirActualizarConservandoElPropioNombreAcentuado() throws SQLException {
+        Servicio creado = servicio.crear(Servicio.nuevo("Baño", null, 15050, 45));
+        Servicio editado = new Servicio(creado.id(), "Baño", "Con secado", 16000, 50, true);
+
+        Servicio actualizado = servicio.actualizar(editado);
+
+        assertEquals("Baño", actualizado.nombre());
+        assertEquals(16000, servicio.buscarPorId(creado.id()).orElseThrow().precioCentavos());
+    }
+
+    @Test
+    void debeRechazarActualizarConElNombreDeUnServicioInactivo() throws SQLException {
+        Servicio inactivo = servicio.crear(Servicio.nuevo("Baño", null, 15050, 45));
+        servicio.desactivar(inactivo.id());
+        Servicio activo = servicio.crear(Servicio.nuevo("Corte", null, 20000, 60));
+
+        Servicio editado = new Servicio(activo.id(), "BAÑO", null, 20000, 60, true);
 
         IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
                 () -> servicio.actualizar(editado));
