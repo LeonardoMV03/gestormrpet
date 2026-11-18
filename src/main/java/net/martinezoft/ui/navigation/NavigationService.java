@@ -39,16 +39,14 @@ public final class NavigationService {
 
     public void mostrarLogin() {
         detenerVigilancia();
-        LoginPage pagina = new LoginPage(new LoginViewModel(contexto.auth()));
-        pagina.setOnAutenticado(this::mostrarShell);
-        escena.setRoot(pagina);
+        LoginViewModel login = new LoginViewModel(contexto.auth());
+        escena.setRoot(new LoginPage(login, this::mostrarShell));
     }
 
     public void mostrarShell() {
         detenerVigilancia();
         ShellViewModel shell = new ShellViewModel(contexto.sesion());
-        MainTemplate plantilla = new MainTemplate(shell);
-        plantilla.setOnCerrarSesion(this::mostrarLogin);
+        MainTemplate plantilla = new MainTemplate(shell, this::mostrarLogin);
         plantilla.setContenido(new InicioPage(shell));
         escena.setRoot(plantilla);
 

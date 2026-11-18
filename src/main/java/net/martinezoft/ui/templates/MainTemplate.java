@@ -30,10 +30,11 @@ public class MainTemplate extends BorderPane {
     @FXML
     private StackPane contenido;
 
-    private Runnable alCerrarSesion = () -> { };
+    private final Runnable alCerrarSesion;
 
-    public MainTemplate(ShellViewModel vm) {
+    public MainTemplate(ShellViewModel vm, Runnable alCerrarSesion) {
         Objects.requireNonNull(vm, "El ViewModel del shell es obligatorio");
+        this.alCerrarSesion = Objects.requireNonNull(alCerrarSesion, "La acción de cierre de sesión es obligatoria");
         CargadorFxml.cargar(this, MainTemplate.class);
 
         textoAviso.textProperty().bind(vm.avisoClaveProperty());
@@ -45,15 +46,11 @@ public class MainTemplate extends BorderPane {
         sidebar.setSeleccionado(inicio);
         sidebar.setOnCerrarSesion(() -> {
             vm.cerrarSesion();
-            alCerrarSesion.run();
+            this.alCerrarSesion.run();
         });
     }
 
     public void setContenido(Node nodo) {
         contenido.getChildren().setAll(nodo);
-    }
-
-    public void setOnCerrarSesion(Runnable accion) {
-        this.alCerrarSesion = Objects.requireNonNull(accion, "La acción es obligatoria");
     }
 }

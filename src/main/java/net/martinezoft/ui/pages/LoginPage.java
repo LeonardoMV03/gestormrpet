@@ -18,20 +18,17 @@ public class LoginPage extends StackPane {
     @FXML
     private LoginTemplate plantilla;
 
-    private Runnable alAutenticar = () -> { };
+    private final Runnable alAutenticar;
 
-    public LoginPage(LoginViewModel vm) {
+    public LoginPage(LoginViewModel vm, Runnable alAutenticar) {
         Objects.requireNonNull(vm, "El ViewModel de login es obligatorio");
+        this.alAutenticar = Objects.requireNonNull(alAutenticar, "La acción de autenticación es obligatoria");
         CargadorFxml.cargar(this, LoginPage.class);
         plantilla.setContenido(new LoginForm(vm));
         vm.autenticadoProperty().addListener((observable, anterior, autenticado) -> {
             if (autenticado) {
-                alAutenticar.run();
+                this.alAutenticar.run();
             }
         });
-    }
-
-    public void setOnAutenticado(Runnable accion) {
-        this.alAutenticar = Objects.requireNonNull(accion, "La acción es obligatoria");
     }
 }
