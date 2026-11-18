@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root type="javafx.scene.layout.VBox" styleClass="sidebar" spacing="4.0" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label styleClass="sidebar-titulo" text="gestormrpet" />
+      <VBox fx:id="listaDestinos" spacing="4.0" />
+   </children>
+</fx:root>
