@@ -1,15 +1,19 @@
 package net.martinezoft.ui.navigation;
 
+import java.util.List;
 import java.util.Objects;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import net.martinezoft.di.AppContext;
+import net.martinezoft.ui.organisms.SidebarNav;
 import net.martinezoft.ui.pages.InicioPage;
 import net.martinezoft.ui.pages.LoginPage;
+import net.martinezoft.ui.pages.ServiciosPage;
 import net.martinezoft.ui.templates.MainTemplate;
 import net.martinezoft.ui.viewmodels.LoginViewModel;
+import net.martinezoft.ui.viewmodels.ServiciosViewModel;
 import net.martinezoft.ui.viewmodels.ShellViewModel;
 
 /**
@@ -47,7 +51,16 @@ public final class NavigationService {
         detenerVigilancia();
         ShellViewModel shell = new ShellViewModel(contexto.sesion());
         MainTemplate plantilla = new MainTemplate(shell, this::mostrarLogin);
-        plantilla.setContenido(new InicioPage(shell));
+
+        InicioPage inicio = new InicioPage(shell);
+        ServiciosPage servicios = new ServiciosPage(new ServiciosViewModel(contexto.servicios()));
+
+        SidebarNav.Destino destinoInicio = new SidebarNav.Destino("inicio", "Inicio");
+        SidebarNav.Destino destinoServicios = new SidebarNav.Destino("servicios", "Servicios");
+        plantilla.configurarDestinos(List.of(destinoInicio, destinoServicios), destinoInicio,
+                destino -> plantilla.setContenido(
+                        "servicios".equals(destino.clave()) ? servicios : inicio));
+
         escena.setRoot(plantilla);
 
         vigilante = new SesionWatcher(shell, this::mostrarLogin);

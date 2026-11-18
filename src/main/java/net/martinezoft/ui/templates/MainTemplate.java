@@ -1,6 +1,8 @@
 package net.martinezoft.ui.templates;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -17,9 +19,6 @@ import net.martinezoft.ui.viewmodels.ShellViewModel;
  * contenido en el centro. Enlaza el aviso y el cierre de sesión con su ViewModel.
  */
 public class MainTemplate extends BorderPane {
-
-    private static final String CLAVE_INICIO = "inicio";
-    private static final String ETIQUETA_INICIO = "Inicio";
 
     @FXML
     private VBox bannerAviso;
@@ -41,13 +40,30 @@ public class MainTemplate extends BorderPane {
         bannerAviso.visibleProperty().bind(vm.avisoClaveVisibleProperty());
         bannerAviso.managedProperty().bind(vm.avisoClaveVisibleProperty());
 
-        SidebarNav.Destino inicio = new SidebarNav.Destino(CLAVE_INICIO, ETIQUETA_INICIO);
-        sidebar.getDestinos().setAll(inicio);
-        sidebar.setSeleccionado(inicio);
         sidebar.setOnCerrarSesion(() -> {
             vm.cerrarSesion();
             this.alCerrarSesion.run();
         });
+    }
+
+    /**
+     * Declara los destinos del menú y avisa cada vez que cambia la selección.
+     * El template no conoce las páginas: solo entrega el destino elegido.
+     */
+    public void configurarDestinos(List<SidebarNav.Destino> destinos,
+                                   SidebarNav.Destino inicial,
+                                   Consumer<SidebarNav.Destino> alNavegar) {
+        Objects.requireNonNull(destinos, "Los destinos son obligatorios");
+        Objects.requireNonNull(inicial, "El destino inicial es obligatorio");
+        Objects.requireNonNull(alNavegar, "La acción de navegación es obligatoria");
+        sidebar.getDestinos().setAll(destinos);
+        sidebar.setSeleccionado(inicial);
+        sidebar.seleccionadoProperty().addListener((observable, anterior, actual) -> {
+            if (actual != null) {
+                alNavegar.accept(actual);
+            }
+        });
+        alNavegar.accept(inicial);
     }
 
     public void setContenido(Node nodo) {
