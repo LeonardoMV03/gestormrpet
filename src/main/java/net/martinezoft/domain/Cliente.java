@@ -18,9 +18,17 @@ public record Cliente(
             throw new IllegalArgumentException("El nombre del cliente es obligatorio");
         }
         nombre = nombre.trim();
+        telefono = normalizarOpcional(telefono);
+        email = normalizarOpcional(email);
+        direccion = normalizarOpcional(direccion);
+        notas = normalizarOpcional(notas);
     }
 
     public static Cliente nuevo(String nombre, String telefono, String email, String direccion, String notas) {
         return new Cliente(null, nombre, telefono, email, direccion, notas, true);
+    }
+
+    private static String normalizarOpcional(String texto) {
+        return texto == null || texto.isBlank() ? null : texto.trim();
     }
 }

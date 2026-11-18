@@ -126,6 +126,44 @@ class ClienteRepositoryTest {
         assertIso8601(leerTimestamp(guardado.id(), "actualizado_en"), "actualizado_en tras desactivar");
     }
 
+    @Test
+    void debeBuscarPorNombreSinDistinguirMayusculas() throws SQLException {
+        repositorio.insertar(Cliente.nuevo("Ana Pérez", "555-1234", null, null, null));
+        repositorio.insertar(Cliente.nuevo("Bruno", "555-9999", null, null, null));
+
+        List<Cliente> encontrados = repositorio.buscar("ana");
+
+        assertEquals(1, encontrados.size());
+        assertEquals("Ana Pérez", encontrados.get(0).nombre());
+    }
+
+    @Test
+    void debeBuscarPorTelefono() throws SQLException {
+        repositorio.insertar(Cliente.nuevo("Ana", "555-1234", null, null, null));
+        repositorio.insertar(Cliente.nuevo("Bruno", "555-9999", null, null, null));
+
+        List<Cliente> encontrados = repositorio.buscar("1234");
+
+        assertEquals(1, encontrados.size());
+        assertEquals("Ana", encontrados.get(0).nombre());
+    }
+
+    @Test
+    void debeIgnorarClientesInactivosAlBuscar() throws SQLException {
+        Cliente ana = repositorio.insertar(Cliente.nuevo("Ana", null, null, null, null));
+        repositorio.desactivar(ana.id());
+
+        assertTrue(repositorio.buscar("Ana").isEmpty());
+    }
+
+    @Test
+    void debeListarTodosLosActivosCuandoLaBusquedaEstaVacia() throws SQLException {
+        repositorio.insertar(Cliente.nuevo("Ana", null, null, null, null));
+        repositorio.insertar(Cliente.nuevo("Bruno", null, null, null, null));
+
+        assertEquals(2, repositorio.buscar("  ").size());
+    }
+
     private String leerTimestamp(long id, String columna) throws SQLException {
         String sql = "SELECT " + columna + " FROM clientes WHERE id = ?";
         try (Connection conexion = database.conexion();
