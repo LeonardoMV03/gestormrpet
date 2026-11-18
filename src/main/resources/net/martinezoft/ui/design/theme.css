@@ -131,8 +131,13 @@
     -fx-text-fill: -color-text-secundario;
 }
 
-.pagina-servicios {
+.pagina-servicios,
+.pagina-clientes {
     -fx-background-color: -color-bg;
+}
+
+.pagina-clientes .tab-pane > .tab-content-area {
+    -fx-background-color: transparent;
 }
 .tabla-servicios {
     -fx-background-color: -color-surface;

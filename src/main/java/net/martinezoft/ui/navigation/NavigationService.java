@@ -3,16 +3,20 @@ package net.martinezoft.ui.navigation;
 import java.util.List;
 import java.util.Objects;
 
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import net.martinezoft.di.AppContext;
 import net.martinezoft.ui.components.SidebarNav;
+import net.martinezoft.ui.pages.ClientesPage;
 import net.martinezoft.ui.pages.InicioPage;
 import net.martinezoft.ui.pages.LoginPage;
 import net.martinezoft.ui.pages.ServiciosPage;
 import net.martinezoft.ui.templates.MainTemplate;
+import net.martinezoft.ui.viewmodels.ClientesViewModel;
 import net.martinezoft.ui.viewmodels.LoginViewModel;
+import net.martinezoft.ui.viewmodels.MascotasViewModel;
 import net.martinezoft.ui.viewmodels.ServiciosViewModel;
 import net.martinezoft.ui.viewmodels.ShellViewModel;
 
@@ -53,18 +57,31 @@ public final class NavigationService {
         MainTemplate plantilla = new MainTemplate(shell, this::mostrarLogin);
 
         InicioPage inicio = new InicioPage(shell);
+        ClientesPage clientes = new ClientesPage(new ClientesViewModel(contexto.clientes()),
+                new MascotasViewModel(contexto.mascotas()));
         ServiciosPage servicios = new ServiciosPage(new ServiciosViewModel(contexto.servicios()));
 
         SidebarNav.Destino destinoInicio = new SidebarNav.Destino("inicio", "Inicio");
+        SidebarNav.Destino destinoClientes = new SidebarNav.Destino("clientes", "Clientes");
         SidebarNav.Destino destinoServicios = new SidebarNav.Destino("servicios", "Servicios");
-        plantilla.configurarDestinos(List.of(destinoInicio, destinoServicios), destinoInicio,
-                destino -> plantilla.setContenido(
-                        "servicios".equals(destino.clave()) ? servicios : inicio));
+        plantilla.configurarDestinos(List.of(destinoInicio, destinoClientes, destinoServicios), destinoInicio,
+                destino -> plantilla.setContenido(contenidoDe(destino, inicio, clientes, servicios)));
 
         escena.setRoot(plantilla);
 
         vigilante = new SesionWatcher(shell, this::mostrarLogin);
         vigilante.iniciar();
+    }
+
+    private static Node contenidoDe(SidebarNav.Destino destino,
+                                                 InicioPage inicio,
+                                                 ClientesPage clientes,
+                                                 ServiciosPage servicios) {
+        return switch (destino.clave()) {
+            case "clientes" -> clientes;
+            case "servicios" -> servicios;
+            default -> inicio;
+        };
     }
 
     private void detenerVigilancia() {
