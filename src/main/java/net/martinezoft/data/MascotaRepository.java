@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import net.martinezoft.domain.Mascota;
+import net.martinezoft.domain.MascotaConDueno;
 
 /**
  * Acceso JDBC a {@code mascotas}. El borrado es lógico: {@link #desactivar(long)}
@@ -78,6 +79,30 @@ public final class MascotaRepository {
                 while (filas.next()) {
                     mascotas.add(mapear(filas));
                 }
+            }
+        }
+        return mascotas;
+    }
+
+    /**
+     * Lista mascotas activas de clientes activos junto con el nombre del dueño.
+     * Es la fuente del selector de mascotas al agendar una visita.
+     */
+    public List<MascotaConDueno> listarActivasConDueno() throws SQLException {
+        String sql = """
+                SELECT m.id, m.cliente_id, m.nombre, m.especie, m.raza, m.sexo,
+                       m.fecha_nacimiento, m.notas, m.activo, c.nombre AS cliente_nombre
+                  FROM mascotas m
+                  JOIN clientes c ON c.id = m.cliente_id
+                 WHERE m.activo = 1 AND c.activo = 1
+                 ORDER BY c.nombre COLLATE NOCASE, m.nombre COLLATE NOCASE
+                """;
+        List<MascotaConDueno> mascotas = new ArrayList<>();
+        try (Connection conexion = database.conexion();
+             PreparedStatement sentencia = conexion.prepareStatement(sql);
+             ResultSet filas = sentencia.executeQuery()) {
+            while (filas.next()) {
+                mascotas.add(new MascotaConDueno(mapear(filas), filas.getString("cliente_nombre")));
             }
         }
         return mascotas;
