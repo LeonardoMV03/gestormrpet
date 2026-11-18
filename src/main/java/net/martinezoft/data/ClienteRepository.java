@@ -83,6 +83,32 @@ public final class ClienteRepository {
     }
 
     /**
+     * Busca clientes activos por nombre o teléfono. Un texto en blanco devuelve
+     * todos los activos.
+     */
+    public List<Cliente> buscar(String texto) throws SQLException {
+        if (texto == null || texto.isBlank()) {
+            return listar();
+        }
+        String patron = "%" + texto.trim() + "%";
+        String sql = "SELECT " + COLUMNAS + " FROM clientes WHERE activo = 1"
+                + " AND (nombre LIKE ? COLLATE NOCASE OR telefono LIKE ? COLLATE NOCASE)"
+                + " ORDER BY nombre COLLATE NOCASE";
+        List<Cliente> clientes = new ArrayList<>();
+        try (Connection conexion = database.conexion();
+             PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+            sentencia.setString(1, patron);
+            sentencia.setString(2, patron);
+            try (ResultSet filas = sentencia.executeQuery()) {
+                while (filas.next()) {
+                    clientes.add(mapear(filas));
+                }
+            }
+        }
+        return clientes;
+    }
+
+    /**
      * Actualiza los datos editables de un cliente activo.
      *
      * @return {@code true} si se actualizó alguna fila.
