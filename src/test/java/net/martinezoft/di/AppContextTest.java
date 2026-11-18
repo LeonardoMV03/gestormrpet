@@ -16,6 +16,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import net.martinezoft.domain.Servicio;
 import net.martinezoft.domain.Usuario;
 
 class AppContextTest {
@@ -68,6 +69,22 @@ class AppContextTest {
         assertNotNull(contexto.hasher());
         assertNotNull(contexto.sesion());
         assertNotNull(contexto.auth());
+        assertNotNull(contexto.servicios());
+    }
+
+    @Test
+    void debeExponerServiciosOperativosConLaBaseTemporal() throws SQLException {
+        AppContext contexto = AppContext.crear(tempDir.resolve("servicios-contexto.db"));
+        contexto.inicializarBaseDatos();
+
+        assertNotNull(contexto.servicios());
+        assertTrue(contexto.servicios().listar().isEmpty());
+
+        Servicio guardado = contexto.servicios().crear(Servicio.nuevo("Baño", null, 15050, 45));
+
+        assertNotNull(guardado.id());
+        assertEquals(1, contexto.servicios().listar().size());
+        assertTrue(contexto.servicios().buscarPorId(guardado.id()).isPresent());
     }
 
     private static List<String> versionesAplicadas(AppContext contexto) throws SQLException {
