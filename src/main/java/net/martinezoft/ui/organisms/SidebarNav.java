@@ -2,6 +2,7 @@ package net.martinezoft.ui.organisms;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
@@ -30,11 +31,20 @@ public class SidebarNav extends VBox {
     private final ObservableList<Destino> destinos = FXCollections.observableArrayList();
     private final ObjectProperty<Destino> seleccionado = new SimpleObjectProperty<>();
     private final Map<Destino, AppButton> botones = new HashMap<>();
+    private final AppButton botonCerrarSesion = new AppButton("Cerrar sesión");
+    private Runnable alCerrarSesion = () -> { };
 
     public SidebarNav() {
         CargadorFxml.cargar(this, SidebarNav.class);
         destinos.addListener((InvalidationListener) observable -> reconstruirBotones());
         seleccionado.addListener((observable, anterior, actual) -> marcarActivo());
+        botonCerrarSesion.setMaxWidth(Double.MAX_VALUE);
+        botonCerrarSesion.setOnAction(e -> alCerrarSesion.run());
+        getChildren().add(botonCerrarSesion);
+    }
+
+    public void setOnCerrarSesion(Runnable accion) {
+        this.alCerrarSesion = Objects.requireNonNull(accion, "La acción es obligatoria");
     }
 
     public ObservableList<Destino> getDestinos() {
