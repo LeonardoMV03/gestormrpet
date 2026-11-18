@@ -18,11 +18,15 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import net.martinezoft.di.AppContext;
 import net.martinezoft.ui.components.SidebarNav;
+import net.martinezoft.ui.pages.AgendaPage;
 import net.martinezoft.ui.pages.ClientesPage;
+import net.martinezoft.ui.pages.CobrosPage;
 import net.martinezoft.ui.pages.LoginPage;
 import net.martinezoft.ui.pages.ServiciosPage;
 import net.martinezoft.ui.templates.MainTemplate;
+import net.martinezoft.ui.viewmodels.AgendaViewModel;
 import net.martinezoft.ui.viewmodels.ClientesViewModel;
+import net.martinezoft.ui.viewmodels.CobrosViewModel;
 import net.martinezoft.ui.viewmodels.LoginViewModel;
 import net.martinezoft.ui.viewmodels.MascotasViewModel;
 import net.martinezoft.ui.viewmodels.ServiciosViewModel;
@@ -55,6 +59,8 @@ class CargaVistasSmokeTest {
                 new ClientesPage(new ClientesViewModel(contexto.clientes()),
                         new MascotasViewModel(contexto.mascotas()));
                 new ServiciosPage(new ServiciosViewModel(contexto.servicios()));
+                new AgendaPage(new AgendaViewModel(contexto.citas()));
+                new CobrosPage(new CobrosViewModel(contexto.citas()));
 
                 SidebarNav.Destino inicio = new SidebarNav.Destino("inicio", "Inicio");
                 MainTemplate plantilla = new MainTemplate(new ShellViewModel(contexto.sesion()), () -> { });

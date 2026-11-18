@@ -9,12 +9,16 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import net.martinezoft.di.AppContext;
 import net.martinezoft.ui.components.SidebarNav;
+import net.martinezoft.ui.pages.AgendaPage;
 import net.martinezoft.ui.pages.ClientesPage;
+import net.martinezoft.ui.pages.CobrosPage;
 import net.martinezoft.ui.pages.InicioPage;
 import net.martinezoft.ui.pages.LoginPage;
 import net.martinezoft.ui.pages.ServiciosPage;
 import net.martinezoft.ui.templates.MainTemplate;
+import net.martinezoft.ui.viewmodels.AgendaViewModel;
 import net.martinezoft.ui.viewmodels.ClientesViewModel;
+import net.martinezoft.ui.viewmodels.CobrosViewModel;
 import net.martinezoft.ui.viewmodels.LoginViewModel;
 import net.martinezoft.ui.viewmodels.MascotasViewModel;
 import net.martinezoft.ui.viewmodels.ServiciosViewModel;
@@ -60,12 +64,18 @@ public final class NavigationService {
         ClientesPage clientes = new ClientesPage(new ClientesViewModel(contexto.clientes()),
                 new MascotasViewModel(contexto.mascotas()));
         ServiciosPage servicios = new ServiciosPage(new ServiciosViewModel(contexto.servicios()));
+        AgendaPage agenda = new AgendaPage(new AgendaViewModel(contexto.citas()));
+        CobrosPage cobros = new CobrosPage(new CobrosViewModel(contexto.citas()));
 
         SidebarNav.Destino destinoInicio = new SidebarNav.Destino("inicio", "Inicio");
+        SidebarNav.Destino destinoAgenda = new SidebarNav.Destino("agenda", "Agenda");
         SidebarNav.Destino destinoClientes = new SidebarNav.Destino("clientes", "Clientes");
         SidebarNav.Destino destinoServicios = new SidebarNav.Destino("servicios", "Servicios");
-        plantilla.configurarDestinos(List.of(destinoInicio, destinoClientes, destinoServicios), destinoInicio,
-                destino -> plantilla.setContenido(contenidoDe(destino, inicio, clientes, servicios)));
+        SidebarNav.Destino destinoCobros = new SidebarNav.Destino("cobros", "Cobros");
+        plantilla.configurarDestinos(List.of(destinoInicio, destinoAgenda, destinoClientes,
+                        destinoServicios, destinoCobros), destinoInicio,
+                destino -> plantilla.setContenido(contenidoDe(destino, inicio, agenda, clientes,
+                        servicios, cobros)));
 
         escena.setRoot(plantilla);
 
@@ -75,11 +85,21 @@ public final class NavigationService {
 
     private static Node contenidoDe(SidebarNav.Destino destino,
                                                  InicioPage inicio,
+                                                 AgendaPage agenda,
                                                  ClientesPage clientes,
-                                                 ServiciosPage servicios) {
+                                                 ServiciosPage servicios,
+                                                 CobrosPage cobros) {
         return switch (destino.clave()) {
+            case "agenda" -> {
+                agenda.recargar();
+                yield agenda;
+            }
             case "clientes" -> clientes;
             case "servicios" -> servicios;
+            case "cobros" -> {
+                cobros.recargar();
+                yield cobros;
+            }
             default -> inicio;
         };
     }

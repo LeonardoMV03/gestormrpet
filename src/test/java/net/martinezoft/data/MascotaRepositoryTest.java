@@ -17,6 +17,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import net.martinezoft.domain.Cliente;
 import net.martinezoft.domain.Mascota;
+import net.martinezoft.domain.MascotaConDueno;
 
 class MascotaRepositoryTest {
 
@@ -59,6 +60,26 @@ class MascotaRepositoryTest {
         List<Mascota> mascotas = repositorio.listarPorCliente(clienteId);
 
         assertEquals(List.of(ana), mascotas);
+    }
+
+    @Test
+    void debeListarMascotasActivasConDuenoDeClientesActivos() throws SQLException {
+        Long bruno = clientes.insertar(Cliente.nuevo("Bruno", null, null, null, null)).id();
+        Long carlos = clientes.insertar(Cliente.nuevo("Carlos", null, null, null, null)).id();
+        Mascota luna = repositorio.insertar(
+                Mascota.nueva(clienteId, "Luna", "perro", null, null, null, null));
+        Mascota michi = repositorio.insertar(
+                Mascota.nueva(bruno, "Michi", "gato", null, null, null, null));
+        Mascota zoe = repositorio.insertar(
+                Mascota.nueva(clienteId, "Zoe", "perro", null, null, null, null));
+        repositorio.insertar(Mascota.nueva(carlos, "Rocky", "perro", null, null, null, null));
+        repositorio.desactivar(zoe.id());
+        clientes.desactivar(carlos);
+
+        List<MascotaConDueno> mascotas = repositorio.listarActivasConDueno();
+
+        assertEquals(List.of(new MascotaConDueno(luna, "Ana"),
+                new MascotaConDueno(michi, "Bruno")), mascotas);
     }
 
     @Test

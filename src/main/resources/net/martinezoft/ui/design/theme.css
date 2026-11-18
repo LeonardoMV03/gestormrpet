@@ -69,6 +69,18 @@
     -fx-border-color: -color-primary;
 }
 
+.combo-box,
+.date-picker {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 8px;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 8px;
+}
+.combo-box:focused,
+.date-picker:focused {
+    -fx-border-color: -color-primary;
+}
+
 /* Moléculas */
 .form-field-etiqueta {
     -fx-font-size: 13px;
@@ -132,21 +144,34 @@
 }
 
 .pagina-servicios,
-.pagina-clientes {
+.pagina-clientes,
+.pagina-agenda,
+.pagina-cobros {
     -fx-background-color: -color-bg;
 }
 
-.pagina-clientes .tab-pane > .tab-content-area {
+.pagina-clientes .tab-pane > .tab-content-area,
+.pagina-agenda .tab-pane > .tab-content-area {
     -fx-background-color: transparent;
 }
-.tabla-servicios {
+.tabla-servicios,
+.tabla-citas,
+.tabla-cobros {
     -fx-background-color: -color-surface;
     -fx-background-radius: 8px;
     -fx-border-color: -color-border;
     -fx-border-radius: 8px;
 }
-.tabla-servicios .placeholder .label {
+.tabla-servicios .placeholder .label,
+.tabla-citas .placeholder .label,
+.tabla-cobros .placeholder .label {
     -fx-text-fill: -color-text-secundario;
+}
+.lista-servicios {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 8px;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 8px;
 }
 .panel-formulario {
     -fx-background-color: -color-surface;

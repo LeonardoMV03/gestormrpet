@@ -35,7 +35,7 @@ class AppContextTest {
         assertTrue(Files.exists(archivo), "La base de datos temporal debe crearse en la ruta indicada");
         assertTrue(contexto.database().url().contains(rutaAbsoluta.toString()),
                 "El contexto debe apuntar solo a la base de datos temporal: " + contexto.database().url());
-        assertEquals(List.of("1", "2", "3", "4"), versionesAplicadas(contexto),
+        assertEquals(List.of("1", "2", "3", "4", "5"), versionesAplicadas(contexto),
                 "AppContext debe aplicar las migraciones V1-V4");
         assertEquals(1, contexto.usuarios().contar(), "Debe sembrarse exactamente un usuario admin");
 
@@ -57,7 +57,7 @@ class AppContextTest {
         contexto.inicializarBaseDatos();
 
         assertEquals(1, contexto.usuarios().contar(), "Inicializar dos veces no debe duplicar el admin");
-        assertEquals(List.of("1", "2", "3", "4"), versionesAplicadas(contexto));
+        assertEquals(List.of("1", "2", "3", "4", "5"), versionesAplicadas(contexto));
     }
 
     @Test
@@ -70,6 +70,7 @@ class AppContextTest {
         assertNotNull(contexto.sesion());
         assertNotNull(contexto.auth());
         assertNotNull(contexto.servicios());
+        assertNotNull(contexto.citas());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package net.martinezoft.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -35,8 +37,8 @@ class MigracionesTest {
     }
 
     @Test
-    void debeRegistrarLasVersionesV1V2V3YV4() throws SQLException {
-        assertEquals(List.of("1", "2", "3", "4"), versionesAplicadas());
+    void debeRegistrarLasVersionesV1V2V3V4YV5() throws SQLException {
+        assertEquals(List.of("1", "2", "3", "4", "5"), versionesAplicadas());
     }
 
     @Test
@@ -99,15 +101,75 @@ class MigracionesTest {
     void debeCrearLosIndicesDelEsquemaBase() throws SQLException {
         Set<String> indices = indicesDeUsuario();
 
-        assertTrue(indices.containsAll(Set.of("idx_mascotas_cliente", "idx_citas_mascota", "idx_notas_mascota")),
+        assertTrue(indices.containsAll(Set.of("idx_mascotas_cliente", "idx_citas_mascota", "idx_notas_mascota",
+                        "idx_citas_fecha_hora", "idx_citas_pago")),
                 "Faltan índices del esquema base. Encontrados: " + indices);
+    }
+
+    @Test
+    void debeRechazarElEstadoConfirmadaEnLaBaseDeDatos() throws SQLException {
+        try (Connection conexion = database.conexion(); Statement sentencia = conexion.createStatement()) {
+            sentencia.executeUpdate("INSERT INTO clientes (nombre) VALUES ('Ana')");
+            sentencia.executeUpdate("INSERT INTO mascotas (cliente_id, nombre) VALUES (1, 'Luna')");
+
+            assertThrows(SQLException.class, () -> sentencia.executeUpdate(
+                    "INSERT INTO citas (mascota_id, fecha_hora, estado) VALUES (1, '2026-11-17T10:00:00', 'confirmada')"));
+        }
+    }
+
+    @Test
+    void debeConservarDatosAlMigrarV5() throws SQLException {
+        Path archivo = tempDir.resolve("datos-v5.db");
+        Database anterior = new Database(archivo);
+        Flyway.configure()
+                .dataSource(anterior.url(), "", "")
+                .locations("classpath:db/migration")
+                .target("4")
+                .load()
+                .migrate();
+
+        try (Connection conexion = anterior.conexion(); Statement sentencia = conexion.createStatement()) {
+            sentencia.executeUpdate("INSERT INTO clientes (nombre) VALUES ('Ana')");
+            sentencia.executeUpdate("INSERT INTO mascotas (cliente_id, nombre) VALUES (1, 'Luna')");
+            sentencia.executeUpdate(
+                    "INSERT INTO servicios (nombre, precio_centavos) VALUES ('Baño', 15050)");
+            sentencia.executeUpdate("""
+                    INSERT INTO citas (id, mascota_id, fecha_hora, estado)
+                    VALUES (10, 1, '2026-11-17T10:00:00', 'confirmada')
+                    """);
+            sentencia.executeUpdate(
+                    "INSERT INTO cita_servicios (cita_id, servicio_id, precio_centavos) VALUES (10, 1, 15050)");
+            sentencia.executeUpdate("""
+                    INSERT INTO notas_historial (mascota_id, cita_id, fecha, texto)
+                    VALUES (1, 10, '2026-11-17T10:00:00', 'Nota anterior')
+                    """);
+        }
+
+        new DatabaseInitializer(anterior).migrar();
+
+        try (Connection conexion = anterior.conexion(); Statement sentencia = conexion.createStatement()) {
+            try (ResultSet cita = sentencia.executeQuery("SELECT estado FROM citas WHERE id = 10")) {
+                assertTrue(cita.next());
+                assertEquals("pendiente", cita.getString("estado"));
+            }
+            try (ResultSet servicios = sentencia.executeQuery(
+                    "SELECT COUNT(*) FROM cita_servicios WHERE cita_id = 10")) {
+                assertTrue(servicios.next());
+                assertEquals(1, servicios.getInt(1));
+            }
+            try (ResultSet notas = sentencia.executeQuery(
+                    "SELECT COUNT(*) FROM notas_historial WHERE cita_id = 10")) {
+                assertTrue(notas.next());
+                assertEquals(1, notas.getInt(1));
+            }
+        }
     }
 
     @Test
     void debeSerIdempotenteAlMigrarDosVeces() throws SQLException {
         new DatabaseInitializer(database).migrar();
 
-        assertEquals(List.of("1", "2", "3", "4"), versionesAplicadas());
+        assertEquals(List.of("1", "2", "3", "4", "5"), versionesAplicadas());
     }
 
     @Test

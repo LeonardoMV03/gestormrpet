@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root type="javafx.scene.layout.VBox" styleClass="pagina-agenda" spacing="16.0" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label styleClass="titulo-pagina" text="Agenda" />
+      <HBox spacing="16.0" VBox.vgrow="ALWAYS">
+         <children>
+            <TabPane tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
+               <tabs>
+                  <Tab text="Hoy">
+                     <content>
+                        <StackPane fx:id="slotHoy" />
+                     </content>
+                  </Tab>
+                  <Tab text="Próximas">
+                     <content>
+                        <StackPane fx:id="slotProximas" />
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
+            <ScrollPane fitToWidth="true" minWidth="360.0" prefWidth="360.0">
+               <content>
+                  <VBox fx:id="panelLateral" spacing="12.0" />
+               </content>
+            </ScrollPane>
+         </children>
+      </HBox>
+   </children>
+</fx:root>
