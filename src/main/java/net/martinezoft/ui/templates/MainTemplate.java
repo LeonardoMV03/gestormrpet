@@ -1,9 +1,7 @@
 package net.martinezoft.ui.templates;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import java.util.Objects;
+
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -12,12 +10,16 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import net.martinezoft.ui.CargadorFxml;
 import net.martinezoft.ui.organisms.SidebarNav;
+import net.martinezoft.ui.viewmodels.ShellViewModel;
 
 /**
  * Layout principal: banner de aviso arriba, menú a la izquierda y slot de
- * contenido en el centro.
+ * contenido en el centro. Enlaza el aviso y el cierre de sesión con su ViewModel.
  */
 public class MainTemplate extends BorderPane {
+
+    private static final String CLAVE_INICIO = "inicio";
+    private static final String ETIQUETA_INICIO = "Inicio";
 
     @FXML
     private VBox bannerAviso;
@@ -28,29 +30,30 @@ public class MainTemplate extends BorderPane {
     @FXML
     private StackPane contenido;
 
-    private final StringProperty aviso = new SimpleStringProperty("");
-    private final BooleanProperty avisoVisible = new SimpleBooleanProperty(false);
+    private Runnable alCerrarSesion = () -> { };
 
-    public MainTemplate() {
+    public MainTemplate(ShellViewModel vm) {
+        Objects.requireNonNull(vm, "El ViewModel del shell es obligatorio");
         CargadorFxml.cargar(this, MainTemplate.class);
-        textoAviso.textProperty().bind(aviso);
-        bannerAviso.visibleProperty().bind(avisoVisible);
-        bannerAviso.managedProperty().bind(avisoVisible);
-    }
 
-    public SidebarNav getSidebar() {
-        return sidebar;
+        textoAviso.textProperty().bind(vm.avisoClaveProperty());
+        bannerAviso.visibleProperty().bind(vm.avisoClaveVisibleProperty());
+        bannerAviso.managedProperty().bind(vm.avisoClaveVisibleProperty());
+
+        SidebarNav.Destino inicio = new SidebarNav.Destino(CLAVE_INICIO, ETIQUETA_INICIO);
+        sidebar.getDestinos().setAll(inicio);
+        sidebar.setSeleccionado(inicio);
+        sidebar.setOnCerrarSesion(() -> {
+            vm.cerrarSesion();
+            alCerrarSesion.run();
+        });
     }
 
     public void setContenido(Node nodo) {
         contenido.getChildren().setAll(nodo);
     }
 
-    public StringProperty avisoProperty() {
-        return aviso;
-    }
-
-    public BooleanProperty avisoVisibleProperty() {
-        return avisoVisible;
+    public void setOnCerrarSesion(Runnable accion) {
+        this.alCerrarSesion = Objects.requireNonNull(accion, "La acción es obligatoria");
     }
 }

@@ -103,11 +103,6 @@
     -fx-border-radius: 12px;
     -fx-padding: 32;
 }
-.tarjeta-login-titulo {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: -color-text;
-}
 
 .banner-aviso {
     -fx-background-color: -color-warning-suave;

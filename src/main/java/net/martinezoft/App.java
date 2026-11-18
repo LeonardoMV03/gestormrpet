@@ -15,7 +15,7 @@ import net.martinezoft.ui.navigation.NavigationService;
 
 /**
  * Punto de entrada de la aplicación. Inicializa la base de datos antes de
- * mostrar cualquier pantalla y elige entre login y shell según la sesión.
+ * mostrar cualquier pantalla.
  */
 public class App extends Application {
 
@@ -36,12 +36,9 @@ public class App extends Application {
             return;
         }
 
+        // La sesión solo vive en memoria: al arrancar nunca hay una activa, así que siempre se entra por login.
         NavigationService navegacion = new NavigationService(stage, contexto);
-        if (contexto.sesion().activa()) {
-            navegacion.mostrarShell();
-        } else {
-            navegacion.mostrarLogin();
-        }
+        navegacion.mostrarLogin();
         stage.show();
     }
 
