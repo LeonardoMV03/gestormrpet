@@ -18,10 +18,13 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import net.martinezoft.di.AppContext;
 import net.martinezoft.ui.components.SidebarNav;
+import net.martinezoft.ui.pages.ClientesPage;
 import net.martinezoft.ui.pages.LoginPage;
 import net.martinezoft.ui.pages.ServiciosPage;
 import net.martinezoft.ui.templates.MainTemplate;
+import net.martinezoft.ui.viewmodels.ClientesViewModel;
 import net.martinezoft.ui.viewmodels.LoginViewModel;
+import net.martinezoft.ui.viewmodels.MascotasViewModel;
 import net.martinezoft.ui.viewmodels.ServiciosViewModel;
 import net.martinezoft.ui.viewmodels.ShellViewModel;
 
@@ -49,6 +52,8 @@ class CargaVistasSmokeTest {
         Platform.runLater(() -> {
             try {
                 new LoginPage(new LoginViewModel(contexto.auth()), () -> { });
+                new ClientesPage(new ClientesViewModel(contexto.clientes()),
+                        new MascotasViewModel(contexto.mascotas()));
                 new ServiciosPage(new ServiciosViewModel(contexto.servicios()));
 
                 SidebarNav.Destino inicio = new SidebarNav.Destino("inicio", "Inicio");
