@@ -1,32 +1,21 @@
 ---
-description: Ejecuta el ciclo completo por feature (issue, plan, implementación, test, review, PR).
+description: Ciclo por feature (plan en issue, rama, implementación con tests, PR con CI).
 agent: planificador
 ---
 
-Orquestas el flujo por feature de gestormrpet. Sigue `AGENTS.md` y las skills del proyecto.
+Orquestas el flujo por feature de gestormrpet. Sigue `AGENTS.md`.
 
 Solicitud: $ARGUMENTS
 
-## Preflight
-- `git status` limpio y rama `develop` disponible.
-- `gh auth status` válido; si falla, detente y pide autenticación.
-
 ## Pasos
-1. **Intake** — Crea el issue:
-   `gh issue create --title "[Feature] $ARGUMENTS" --label "tipo:feature,fase:plan" --body "<contexto y criterios>"`
-   Anota el número de issue y asígnalo al milestone correspondiente.
-2. **Plan** — Genera el plan en `.opencode/plans/<slug>.md` y publícalo con `gh issue comment <n> --body-file .opencode/plans/<slug>.md`.
-3. **Gate** — Pide aprobación del plan con `question`. No continúes sin aprobación explícita. Si rechaza, ajusta y repite.
-4. **Rama** — `git switch -c feature/<slug> develop`.
-5. **Implementación** — Invoca al subagente `implementador` con `task`, pasándole el plan y la rama.
-6. **Test** — Invoca al subagente `tester`; exige `mvn test` en verde.
-7. **Review** — Invoca al subagente `revisor`; debe emitir `APROBADO`.
-8. **PR** — `git push -u origin feature/<slug>` y `gh pr create --base develop --title "feat: ..." --body "Closes #<n>"`.
-9. **CI** — `gh pr checks --watch`; si falla, vuelve al implementador.
-10. **Merge** — **No mergees**. Pide al usuario el squash-merge manual y el borrado de rama.
-11. **Cierre** — Actualiza label a `fase:listo`, comenta el resultado y mueve la tarjeta del Project.
+1. **Plan** — Si no existe issue, créalo con `gh issue create` (label `tipo:*` y `prioridad:*`, criterios de aceptación en el cuerpo). Publica el plan breve con `gh issue comment`.
+2. **Gate** — Si es cambio de riesgo (auth, esquema, migraciones), pide aprobación con `question`. Si no, continúa.
+3. **Rama** — `git switch -c feature/<slug> develop`.
+4. **Implementación** — Invoca al subagente `implementador` con `task`, pasándole el issue y la rama. Debe dejar `mvn -B verify` verde.
+5. **Revisión** — Solo si aplica (auth, esquema, migraciones): invoca al revisor y exige `APROBADO`.
+6. **PR** — `git push -u origin feature/<slug>` y `gh pr create --base develop --title "feat: ..." --body "Closes #<n>"`.
+7. **Merge** — **No mergees.** Espera a que CI esté verde (`gh pr checks`) y pide al usuario el squash-merge.
 
 ## Reglas
-- Un gate por fase; reporta estado al usuario en cada uno.
 - Si algo falla o es ambiguo, detente y pregunta.
 - Nunca mergees, nunca hagas push a `main`/`develop`.
