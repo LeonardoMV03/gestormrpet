@@ -136,4 +136,35 @@ class ServicioServiceTest {
     void debeRechazarDesactivarUnServicioInexistente() {
         assertThrows(IllegalArgumentException.class, () -> servicio.desactivar(999));
     }
+
+    @Test
+    void debeRechazarActualizarUnServicioDesactivado() throws SQLException {
+        Servicio creado = servicio.crear(Servicio.nuevo("Baño", null, 15050, 45));
+        servicio.desactivar(creado.id());
+
+        Servicio editado = new Servicio(creado.id(), "Baño", null, 20000, 60, true);
+
+        IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
+                () -> servicio.actualizar(editado));
+        assertEquals("El servicio no existe o está desactivado", error.getMessage());
+    }
+
+    @Test
+    void debeEncontrarUnServicioInactivoPorId() throws SQLException {
+        Servicio creado = servicio.crear(Servicio.nuevo("Baño", null, 15050, 45));
+        servicio.desactivar(creado.id());
+
+        Servicio inactivo = servicio.buscarPorId(creado.id()).orElseThrow();
+        assertFalse(inactivo.activo());
+    }
+
+    @Test
+    void debeRechazarActualizarUnServicioNulo() {
+        assertThrows(NullPointerException.class, () -> servicio.actualizar(null));
+    }
+
+    @Test
+    void debeListarVacioCuandoNoHayServicios() throws SQLException {
+        assertTrue(servicio.listar().isEmpty());
+    }
 }

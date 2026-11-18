@@ -230,4 +230,133 @@ class ServiciosViewModelTest {
 
         assertEquals(ServiciosViewModel.MENSAJE_ERROR_TECNICO, conFallo.errorGeneralProperty().get());
     }
+
+    @Test
+    void debeRechazarDesactivarSinSeleccion() {
+        vm.desactivarSeleccionado();
+
+        assertEquals(ServiciosViewModel.MENSAJE_SIN_SELECCION, vm.errorGeneralProperty().get());
+        assertTrue(vm.servicios().isEmpty());
+    }
+
+    @Test
+    void debeMostrarErrorDeNombreVacioAlGuardar() {
+        vm.precioTextoProperty().set("150");
+
+        assertFalse(vm.puedeGuardarProperty().get(), "Sin nombre no debe permitir guardar");
+        vm.guardar();
+
+        assertFalse(vm.errorNombreProperty().get().isBlank());
+        assertEquals("", vm.errorGeneralProperty().get());
+        assertEquals("", vm.mensajeProperty().get());
+        assertTrue(vm.servicios().isEmpty());
+    }
+
+    @Test
+    void debeCalcularPuedeGuardarConPrecioConPuntoYDuracionCero() {
+        vm.nombreProperty().set("Baño");
+        vm.precioTextoProperty().set("150.50");
+        vm.duracionTextoProperty().set("0");
+
+        assertTrue(vm.puedeGuardarProperty().get());
+    }
+
+    @Test
+    void debeRechazarPuedeGuardarConDuracionNegativa() {
+        vm.nombreProperty().set("Baño");
+        vm.precioTextoProperty().set("0");
+
+        assertTrue(vm.puedeGuardarProperty().get(), "Precio cero y duración vacía son válidos");
+
+        vm.duracionTextoProperty().set("-5");
+
+        assertFalse(vm.puedeGuardarProperty().get(), "Una duración negativa no es válida");
+    }
+
+    @Test
+    void debeGuardarPrecioConPuntoDecimalComoCentavos() throws Exception {
+        vm.nombreProperty().set("Baño");
+        vm.precioTextoProperty().set("150.50");
+
+        vm.guardar();
+
+        assertEquals(ServiciosViewModel.MENSAJE_GUARDADO, vm.mensajeProperty().get());
+        assertEquals(15050, servicio.listar().get(0).precioCentavos());
+    }
+
+    @Test
+    void debeLimpiarFormularioAlDeseleccionar() throws Exception {
+        servicio.crear(Servicio.nuevo("Baño", null, 15050, 45));
+        vm.cargar();
+        vm.seleccionar(vm.servicios().get(0));
+
+        vm.seleccionar(null);
+
+        assertNull(vm.seleccionadoProperty().get());
+        assertEquals("", vm.nombreProperty().get());
+        assertEquals("", vm.descripcionProperty().get());
+        assertEquals("", vm.precioTextoProperty().get());
+        assertEquals("", vm.duracionTextoProperty().get());
+        assertFalse(vm.editandoProperty().get());
+    }
+
+    @Test
+    void debeQuitarLaSeleccionSiElServicioDejaDeEstarActivo() throws Exception {
+        Servicio creado = servicio.crear(Servicio.nuevo("Baño", null, 15050, 45));
+        vm.cargar();
+        vm.seleccionar(vm.servicios().get(0));
+
+        servicio.desactivar(creado.id());
+        vm.cargar();
+
+        assertTrue(vm.servicios().isEmpty());
+        assertNull(vm.seleccionadoProperty().get());
+        assertEquals("", vm.nombreProperty().get(), "El formulario debe limpiarse si la selección desaparece");
+        assertFalse(vm.editandoProperty().get());
+    }
+
+    @Test
+    void debeLimpiarErroresAlPulsarNuevo() {
+        vm.precioTextoProperty().set("abc");
+        vm.guardar();
+        assertFalse(vm.errorPrecioProperty().get().isBlank());
+
+        vm.nuevo();
+
+        assertEquals("", vm.errorNombreProperty().get());
+        assertEquals("", vm.errorPrecioProperty().get());
+        assertEquals("", vm.errorDuracionProperty().get());
+        assertEquals("", vm.errorGeneralProperty().get());
+    }
+
+    @Test
+    void debeReseleccionarYNormalizarElServicioGuardadoAlEditar() throws Exception {
+        Servicio creado = servicio.crear(Servicio.nuevo("Baño", null, 15050, 45));
+        vm.cargar();
+        vm.seleccionar(vm.servicios().get(0));
+
+        vm.nombreProperty().set("Baño premium");
+        vm.precioTextoProperty().set("200");
+        vm.guardar();
+
+        Servicio seleccionado = vm.seleccionadoProperty().get();
+        assertNotNull(seleccionado, "Tras guardar debe quedar reseleccionado el servicio");
+        assertEquals(creado.id(), seleccionado.id());
+        assertEquals("Baño premium", seleccionado.nombre());
+        assertEquals("200,00", vm.precioTextoProperty().get(), "El precio debe normalizarse al formato con coma");
+        assertTrue(vm.editandoProperty().get());
+    }
+
+    @Test
+    void debeMostrarErrorTecnicoAlDesactivarConBaseInaccesible() {
+        Path inexistente = tempDir.resolve("no-existe").resolve("bd.db");
+        ServicioService servicioRoto = new ServicioService(
+                new ServicioRepository(Database.deUrl("jdbc:sqlite:" + inexistente)));
+        ServiciosViewModel conFallo = new ServiciosViewModel(servicioRoto);
+        conFallo.seleccionadoProperty().set(new Servicio(1L, "Baño", null, 15050, 45, true));
+
+        conFallo.desactivarSeleccionado();
+
+        assertEquals(ServiciosViewModel.MENSAJE_ERROR_TECNICO, conFallo.errorGeneralProperty().get());
+    }
 }

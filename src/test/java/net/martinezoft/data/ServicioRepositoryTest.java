@@ -126,4 +126,40 @@ class ServicioRepositoryTest {
         assertThrows(SQLException.class,
                 () -> repositorio.insertar(Servicio.nuevo("Baño", null, 20000, 60)));
     }
+
+    @Test
+    void debeEncontrarServicioInactivoPorNombreSinDistinguirMayusculas() throws SQLException {
+        Servicio guardado = repositorio.insertar(Servicio.nuevo("Baño", null, 15050, 45));
+        repositorio.desactivar(guardado.id());
+
+        Servicio encontrado = repositorio.buscarPorNombre("baño").orElseThrow();
+
+        assertEquals(guardado.id(), encontrado.id());
+        assertFalse(encontrado.activo(), "La búsqueda por nombre debe incluir inactivos");
+    }
+
+    @Test
+    void debeDevolverFalseAlDesactivarUnIdInexistente() throws SQLException {
+        assertFalse(repositorio.desactivar(999), "Un id inexistente no debe desactivar filas");
+    }
+
+    @Test
+    void debePermitirLimpiarDescripcionYDuracionAlActualizar() throws SQLException {
+        Servicio guardado = repositorio.insertar(Servicio.nuevo("Baño", "Completo", 15050, 45));
+        Servicio limpiado = new Servicio(guardado.id(), "Baño", null, 15050, null, true);
+
+        assertTrue(repositorio.actualizar(limpiado));
+
+        Servicio releido = repositorio.buscarPorId(guardado.id()).orElseThrow();
+        assertNull(releido.descripcion());
+        assertNull(releido.duracionMin());
+    }
+
+    @Test
+    void debePersistirDuracionCeroSinConvertirlaEnNula() throws SQLException {
+        Servicio guardado = repositorio.insertar(Servicio.nuevo("Consulta", null, 0, 0));
+
+        assertEquals(0, repositorio.buscarPorId(guardado.id())
+                .orElseThrow().duracionMin().intValue());
+    }
 }

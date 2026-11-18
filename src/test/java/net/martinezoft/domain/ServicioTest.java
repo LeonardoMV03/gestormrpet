@@ -64,5 +64,21 @@ class ServicioTest {
         assertNull(servicio.id());
         assertTrue(servicio.activo());
         assertFalse(servicio.nombre().isBlank());
+        assertEquals("Baño", servicio.nombre(), "nuevo debe recortar el nombre");
+        assertEquals("Baño completo", servicio.descripcion());
+    }
+
+    @Test
+    void debePermitirDuracionCero() {
+        Servicio servicio = new Servicio(null, "Consulta", null, 0, 0, true);
+
+        assertEquals(0, servicio.duracionMin().intValue());
+    }
+
+    @Test
+    void debeConservarDescripcionNula() {
+        Servicio servicio = new Servicio(null, "Baño", null, 0, null, true);
+
+        assertNull(servicio.descripcion());
     }
 }
