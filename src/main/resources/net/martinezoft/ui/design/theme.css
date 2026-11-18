@@ -130,3 +130,27 @@
     -fx-font-size: 13px;
     -fx-text-fill: -color-text-secundario;
 }
+
+.pagina-servicios {
+    -fx-background-color: -color-bg;
+}
+.tabla-servicios {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 8px;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 8px;
+}
+.tabla-servicios .placeholder .label {
+    -fx-text-fill: -color-text-secundario;
+}
+.panel-formulario {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 12px;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 12px;
+    -fx-padding: 16;
+}
+.etiqueta-mensaje {
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-primary;
+}
